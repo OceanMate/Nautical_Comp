@@ -1,22 +1,26 @@
-import RPi.GPIO as GPIO
-
+import pigpio
 from time import sleep
 
 class ApisqueenMotor:
-    def __init__(self,id):
-        
-        # Stops all warnings from appearing
-        GPIO.setwarnings(False)
-        # We name all the pins on BOARD mode
-        GPIO.setmode(GPIO.BOARD)
-        # Set an output for the PWM Signal
-        GPIO.setup(id, GPIO.OUT)
-        # Set up the  PWM on pin #16 at 50Hz
-        self.pwm = GPIO.PWM(id, 50)
+    def __init__(self, id):
+        self.id = id
+        self.pi = pigpio.pi()
+        if not self.pi.connected:
+            raise Exception("Could not connect to pigpio daemon")
+        #Apisqueen Motors need to be set up to there neutral position
+        stop()
+        sleep(1)
+       
+
+    # pulse_width is in microseconds
+    # pulse_width should be between 1000 and 2000
+    def set_pulse_width(self, pulse_width):
+        self.pi.set_servo_pulsewidth(self.id, pulse_width)
+
+    def stop(self):
+        self.pi.set_servo_pulsewidth(self.id, 1500)
+        self.pi.stop()
 
 
     
-    def writeMicroseconds(self, microseconds):
-        period = 20  # Period in milliseconds for 50Hz
-        duty_cycle = (microseconds / 1000) / period * 100  # Convert to percentage
-        self.pwm.ChangeDutyCycle(duty_cycle)
+ 

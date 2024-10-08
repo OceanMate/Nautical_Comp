@@ -1,7 +1,7 @@
 class Subsystem:
-    def __init__(self, name):
-        self.name = name
-
+    def __init__(self):
+        return
+    
     def onEnable(self):
         raise NotImplementedError("Subclasses should implement this!")
     
