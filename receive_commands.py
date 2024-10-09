@@ -1,6 +1,9 @@
 import socket
 
 class EthernetMangment:
+    shutdown = False
+    motorData = []
+
     def __init__(self):
         self.start_server()
 
@@ -25,4 +28,13 @@ class EthernetMangment:
                         response = f"Executing command: {command}"
                         
                         conn.sendall(response.encode('utf-8'))
+
+    def getMotorData(self):
+        return 0
+    
+    def getShutdown(self):
+        return False
+
+    def requstCommands(self):
+        return 0
 

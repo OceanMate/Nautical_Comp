@@ -1,6 +1,7 @@
 from Subsystem import Subsystem
 from Modules.ApisqueenMotor import ApisqueenMotor
 from Constants import Constants
+from receive_commands import receive_commands
 
 class MovementSubsystem(Subsystem):
     def __init__(self):
@@ -8,14 +9,11 @@ class MovementSubsystem(Subsystem):
         verticalMotors = []
         verticalMotors[0] = ApisqueenMotor(Constants.frontVerticalMotorPin)
         verticalMotors[1] = ApisqueenMotor(Constants.backVerticalMotorPin)
-
-    def onEnable(self):
-        return
+        
 
     def periodic(self):
-        return
+        
+        self.verticalMotors[0].set_pulse_width(2000)
+        self.verticalMotors[1].set_pulse_width(2000)
 
-    def onDisable(self):
-        for motor in self.verticalMotors:
-            motor.stop()
         return
