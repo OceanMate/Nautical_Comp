@@ -8,7 +8,7 @@ class ApisqueenMotor:
         if not self.pi.connected:
             raise Exception("Could not connect to pigpio daemon")
         #Apisqueen Motors need to be set up to there neutral position
-        stop()
+        self.stop()
         sleep(1)
        
 
