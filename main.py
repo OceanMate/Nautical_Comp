@@ -6,7 +6,7 @@ from receive_commands import receive_commands
 
 class main:
     def __init__(self):
-        # Create array subsystems
+        # Create array of subsystems
         subsystems = {}
         subsystems["Movement"] = MovementSubsystem()
         
@@ -22,6 +22,7 @@ class main:
             self.commands.requstCommands();
             Shutdown = self.commands.getShutdown();
 
+            # Call the periodic method of each subsystem
             for subsystem in self.subsystems:
                 subsystem.periodic()
         

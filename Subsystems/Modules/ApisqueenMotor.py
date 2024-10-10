@@ -4,6 +4,7 @@ from time import sleep
 class ApisqueenMotor:
     def __init__(self, id):
         self.id = id
+        # Set up the pigpio 
         self.pi = pigpio.pi()
         if not self.pi.connected:
             raise Exception("Could not connect to pigpio daemon")
@@ -19,7 +20,6 @@ class ApisqueenMotor:
 
     def stop(self):
         self.pi.set_servo_pulsewidth(self.id, 1500)
-        self.pi.stop()
 
 
     
