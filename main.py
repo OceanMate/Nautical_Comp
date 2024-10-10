@@ -6,15 +6,18 @@ from receive_commands import receive_commands
 
 class main:
     def __init__(self):
+        # Create array subsystems
         subsystems = {}
         subsystems["Movement"] = MovementSubsystem()
-        commands = receive_commands()
+        
+        self.commands = receive_commands()
 
-        self.periodic()
+        self.loop()
 
 
-    def periodic(self):
-
+    def loop(self):
+        Shutdown = False
+        
         while Shutdown == False:
             self.commands.requstCommands();
             Shutdown = self.commands.getShutdown();

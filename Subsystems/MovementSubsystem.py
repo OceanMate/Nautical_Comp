@@ -12,8 +12,10 @@ class MovementSubsystem(Subsystem):
         
 
     def periodic(self):
-        
-        self.verticalMotors[0].set_pulse_width(2000)
-        self.verticalMotors[1].set_pulse_width(2000)
+        motorData = receive_commands.motorData
 
-        return
+        i = 0
+        while i < self.verticalMotors.length:
+            self.verticalMotors[i].set_pulse_width(motorData[i])
+            i += 1
+
