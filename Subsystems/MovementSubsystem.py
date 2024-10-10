@@ -13,11 +13,13 @@ class MovementSubsystem(Subsystem):
         
 
     def periodic(self):
-        motorData = receive_commands.motorData
+        motorData = receive_commands().motorData
 
         # Set the speed of the vertical motors from the motor data
         i = 0
         while i < self.verticalMotors.length:
             self.verticalMotors[i].set_pulse_width(motorData[i])
             i += 1
+            
+
 

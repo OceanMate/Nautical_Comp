@@ -1,11 +1,20 @@
 import socket
 
-class EthernetMangment:
-    shutdown = False
-    motorData = []
+class receive_commands:
+    
+    
+    # When a new instance is created, sets it to the same global instance
+    def __new__(cls):
+        # If the instance is None, create a new instance
+        # Otherwise, return already created instance
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
     def __init__(self):
         self.start_server()
+        self.shutdown = False
+        self.motorData = []
 
     def start_server(host='0.0.0.0', port=12345):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

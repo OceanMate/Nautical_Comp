@@ -6,7 +6,7 @@ from receive_commands import receive_commands
 
 class main:
     def __init__(self):
-        # Create array of subsystems
+        # Create dictornary of subsystems
         subsystems = {}
         subsystems["Movement"] = MovementSubsystem()
         
@@ -20,11 +20,13 @@ class main:
         
         while Shutdown == False:
             self.commands.requstCommands();
-            Shutdown = self.commands.getShutdown();
+            Shutdown = self.commands.shutdown;
 
             # Call the periodic method of each subsystem
             for subsystem in self.subsystems:
                 subsystem.periodic()
         
-    
-    
+
+# Run the main class 
+if __name__ == "__main__":
+    main()
