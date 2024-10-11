@@ -1,7 +1,7 @@
 import socket
 
 class receive_commands:
-    
+    _instance = None
     
     # When a new instance is created, sets it to the same global instance
     def __new__(cls):
