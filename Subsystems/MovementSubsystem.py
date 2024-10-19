@@ -10,6 +10,13 @@ class MovementSubsystem(Subsystem):
         # Create vertical motors
         verticalMotors[0] = ApisqueenMotor(Constants.frontVerticalMotorPin)
         verticalMotors[1] = ApisqueenMotor(Constants.backVerticalMotorPin)
+
+        horizontalMotors = []
+        # Create horizontal motors
+        horizontalMotors[0] = ApisqueenMotor(Constants.mflForwardID, Constants.mflBackwardID, Constants.mflSpeedID)
+        horizontalMotors[1] = ApisqueenMotor(Constants.mfrForwardID, Constants.mfrBackwardID, Constants.mfrSpeedID)
+        horizontalMotors[2] = ApisqueenMotor(Constants.mbrForwardID, Constants.mbrBackwardID, Constants.mbrSpeedID)
+        horizontalMotors[3] = ApisqueenMotor(Constants.mblForwardID, Constants.mblBackwardID, Constants.mblSpeedID)
         
 
     def periodic(self):
@@ -18,7 +25,13 @@ class MovementSubsystem(Subsystem):
         # Set the speed of the vertical motors from the motor data
         i = 0
         while i < self.verticalMotors.length:
-            self.verticalMotors[i].set_pulse_width(motorData[i])
+            self.verticalMotors[i].set_power(motorData[i])
+            i += 1
+
+        # Set the speed of the horizontal motors from the motor data
+        i = 0
+        while i < self.horizontalMotors.length:
+            self.horizontalMotors[i].set_power(motorData[i + 2])
             i += 1
             
 
