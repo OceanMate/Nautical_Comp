@@ -10,9 +10,13 @@ class main:
         subsystems = {}
         subsystems["Movement"] = MovementSubsystem()
         
-        self.commands = receive_commands()
+        i = 0
+        while i < subsystems["Movement"].horizontalMotors.length:
+            self.horizontalMotors[i].set_power(1)
+            i += 1
+        #self.commands = receive_commands()
 
-        self.loop()
+        #self.loop()
 
 
     def loop(self):
