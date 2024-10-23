@@ -2,17 +2,20 @@ import RPi.GPIO as GPIO
 from Constants import Constants
 
 
+
 class BilgePumpMotor:
     def __init__(self, forwardID, backwardID, speedID):
         self.forwardID = forwardID
         self.backwardID = backwardID
         self.speedID = speedID
         
-        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.forwardID, GPIO.OUT)
         GPIO.setup(self.backwardID, GPIO.OUT)
+        GPIO.setup(self.speedID, GPIO.OUT)
         # Set up the PWM on pin #speedID at 50Hz
-        self.pwm = GPIO.PWM(self.speedID, 50)
+        self.pwm = GPIO.PWM(self.speedID, 500)
+        self.pwm.start(0)
+    
 
 
     # input power is a number between -1 and 1
@@ -28,3 +31,5 @@ class BilgePumpMotor:
         # set the speed of the motor
         speed = Constants.map(abs(power), 0, 1, 0, 100);
         self.pwm.ChangeDutyCycle(speed)
+        print(speed)
+        

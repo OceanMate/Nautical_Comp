@@ -2,18 +2,21 @@ from Constants import Constants
 from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems.MovementSubsystem import MovementSubsystem
 from receive_commands import receive_commands
+import RPi.GPIO as GPIO
+from time import sleep
 
 
 class main:
     def __init__(self):
+        sleep(10)
         # Create dictornary of subsystems
+        GPIO.setmode(GPIO.BCM)
+        
+        
         subsystems = {}
         subsystems["Movement"] = MovementSubsystem()
         
-        i = 0
-        while i < subsystems["Movement"].horizontalMotors.length:
-            self.horizontalMotors[i].set_power(1)
-            i += 1
+        
         #self.commands = receive_commands()
 
         #self.loop()
