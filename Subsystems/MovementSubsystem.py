@@ -4,47 +4,52 @@ from Subsystems.Modules.BilgePumpMotor import BilgePumpMotor
 
 from Constants import Constants
 from receive_commands import receive_commands
-from time import sleep
-
+import RPi.GPIO as GPIO
 
 class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
+
+        GPIO.setmode(GPIO.BCM)
         verticalMotors = []
         # Create vertical motors
-        #verticalMotors[0] = ApisqueenMotor(Constants.frontVerticalMotorPin)
-        #verticalMotors[1] = ApisqueenMotor(Constants.backVerticalMotorPin)
+        #verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
+        #verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
 
-        horizontalMotors = {}
+        self.horizontalMotors = []
         # Create horizontal motors
-        horizontalMotors[0] = BilgePumpMotor(Constants.mflForwardID, Constants.mflBackwardID, Constants.mflSpeedID)
-        horizontalMotors[1] = BilgePumpMotor(Constants.mfrForwardID, Constants.mfrBackwardID, Constants.mfrSpeedID)
-        #horizontalMotors[2] = BilgePumpMotor(Constants.mbrForwardID, Constants.mbrBackwardID, Constants.mbrSpeedID)
-        #horizontalMotors[3] = BilgePumpMotor(Constants.mblForwardID, Constants.mblBackwardID, Constants.mblSpeedID)
-        while True:
-                i = 0
-                while i < len(horizontalMotors):
-                    horizontalMotors[i].set_power(1)
-                    sleep(.001)
-                    #horizontalMotors[i].set_power(0)
-                    #sleep(.001)
-                    i += 1
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mflForwardID, Constants.mflBackwardID, Constants.mflSpeedID))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mfrForwardID, Constants.mfrBackwardID, Constants.mfrSpeedID))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mbrForwardID, Constants.mbrBackwardID, Constants.mbrSpeedID))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mblForwardID, Constants.mblBackwardID, Constants.mblSpeedID))
+        
+        # Set the speed of the motors to 0
+        for motor in self.verticalMotors:
+            motor.set_power(0)
+
+        for motor in self.horizontalMotors:
+            motor.set_power(0)
+            
+        
+                        
                     
 
     def periodic(self):
-        motorData = receive_commands().motorData
+        #motorData = receive_commands().motorData
 
         # Set the speed of the vertical motors from the motor data
-        i = 0
-        while i < self.verticalMotors.length:
-            self.verticalMotors[i].set_power(motorData[i])
-            i += 1
+        #for motor in self.verticalMotors:
+        #    motor.set_power(1)
 
-        # Set the speed of the horizontal motors from the motor data
-        i = 0
-        while i < len(self.horizontalMotors):
-            self.horizontalMotors[i].set_power(motorData[i + 2])
-            i += 1
+        for motor in self.horizontalMotors:
+            motor.set_power(1)
+            
+        
+            
+            
+    def end(self):
+        GPIO.cleanup()
+        
             
 
 

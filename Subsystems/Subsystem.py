@@ -9,3 +9,5 @@ class Subsystem:
     def periodic(self):
         raise NotImplementedError("Subclasses should implement this!")
 
+    def end(self):
+        raise NotImplementedError("Subclasses should implement this!")

@@ -5,6 +5,7 @@ from Constants import Constants
 
 class BilgePumpMotor:
     def __init__(self, forwardID, backwardID, speedID):
+        GPIO.setmode(GPIO.BCM)
         self.forwardID = forwardID
         self.backwardID = backwardID
         self.speedID = speedID
@@ -31,5 +32,4 @@ class BilgePumpMotor:
         # set the speed of the motor
         speed = Constants.map(abs(power), 0, 1, 0, 100);
         self.pwm.ChangeDutyCycle(speed)
-        print(speed)
         
