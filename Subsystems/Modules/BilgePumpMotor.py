@@ -4,11 +4,11 @@ from Constants import Constants
 
 
 class BilgePumpMotor:
-    def __init__(self, forwardID, backwardID, speedID):
+    def __init__(self, motorIDs):
         GPIO.setmode(GPIO.BCM)
-        self.forwardID = forwardID
-        self.backwardID = backwardID
-        self.speedID = speedID
+        self.forwardID = motorIDs.forward
+        self.backwardID = motorIDs.backward
+        self.speedID = motorIDs.speed
         
         GPIO.setup(self.forwardID, GPIO.OUT)
         GPIO.setup(self.backwardID, GPIO.OUT)

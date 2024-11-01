@@ -18,10 +18,10 @@ class MovementSubsystem(Subsystem):
 
         self.horizontalMotors = []
         # Create horizontal motors
-        self.horizontalMotors.append(BilgePumpMotor(Constants.mflForwardID, Constants.mflBackwardID, Constants.mflSpeedID))
-        self.horizontalMotors.append(BilgePumpMotor(Constants.mfrForwardID, Constants.mfrBackwardID, Constants.mfrSpeedID))
-        self.horizontalMotors.append(BilgePumpMotor(Constants.mbrForwardID, Constants.mbrBackwardID, Constants.mbrSpeedID))
-        self.horizontalMotors.append(BilgePumpMotor(Constants.mblForwardID, Constants.mblBackwardID, Constants.mblSpeedID))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mfl))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mfr))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mbr))
+        self.horizontalMotors.append(BilgePumpMotor(Constants.mbl))
         
         # Set the speed of the motors to 0
         for motor in self.verticalMotors:
