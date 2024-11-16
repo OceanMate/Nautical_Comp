@@ -3,7 +3,7 @@ from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems.Modules.BilgePumpMotor import BilgePumpMotor
 
 from Constants import Constants
-from receive_commands import receive_commands
+from server import ROVServer
 import RPi.GPIO as GPIO
 
 class MovementSubsystem(Subsystem):
@@ -30,19 +30,22 @@ class MovementSubsystem(Subsystem):
         for motor in self.horizontalMotors:
             motor.set_power(0)
             
+        self.sever = ROVServer()
+            
         
                         
                     
 
     def periodic(self):
-        #motorData = receive_commands().motorData
+        motorData = self.server.motor_data
 
         # Set the speed of the vertical motors from the motor data
         #for motor in self.verticalMotors:
         #    motor.set_power(1)
-
+        i = 0;
         for motor in self.horizontalMotors:
-            motor.set_power(1)
+            motor.set_power(motorData[i])
+            i += 1
             
         
             

@@ -9,20 +9,33 @@ Created on Tue Nov 12 15:27:04 2024
 import socket
 import signal
 import sys
-from typing import Dict, List, Optional
-from Constants import Constants, BilgeMotorIDs
+from typing import List, Optional
 
 class ROVServer:
+    
+    _instance = None
+
+    # When a new instance is created, sets it to the same global instance
+    def __new__(cls):
+        # If the instance is None, create a new instance
+        # Otherwise, return already created instance
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._start()
+        return cls._instance
+    
+    
     def __init__(self, port: int = 8000):
         self.port = port
         self.socket = None
         self.running = False
-        self.command_data: Dict[str, List[float]] = {}
-        self.constants = Constants()
+        self.motor_data: List[float] = [0,0,0,0,0,0]
         
         # Setup signal handlers for graceful shutdown
         signal.signal(signal.SIGINT, self.handle_shutdown)
         signal.signal(signal.SIGTERM, self.handle_shutdown)
+        
+        self.start()
     
     def handle_shutdown(self, signum, frame):
         """Handle shutdown signals gracefully"""
@@ -41,7 +54,7 @@ class ROVServer:
             self.shutdown = False
             print(f'ROV Server listening on port {self.port}...')
             
-            self.run_server()
+            #self.run_server()
             
         except socket.error as e:
             print(f"Server failed to start: {e}")
@@ -77,53 +90,43 @@ class ROVServer:
             try:
                 values = [float(x) for x in parts[1:]]
                 # Store motor values and apply them
-                self.command_data[cmd_type] = values
-                self.apply_motor_values(values)
+                self.motor_data = values
                 print(f'Received motor values: {values}')
             except ValueError:
                 print('Invalid motor values received')
     
-    def apply_motor_values(self, values: List[float]) -> None:
-        """Apply motor values to the ROV motors"""
-        #do motor stuff
-        self.cmd1 = values[0]
-        self.cmd2 = values[1]
-        self.cmd3 = values[2]
-        self.cmd4 = values[3]
-        self.cmd5 = values[4]
-        self.cmd6 = values[5]
       
     def run_server(self) -> None:
         """Main server loop"""
-        while self.running:
-            try:
-                conn, addr = self.socket.accept()
-                print(f'Connected to {addr}')
-                
-                conn.settimeout(5)  # 5 seconds for timeout
-                
-                while self.running:
-                    try:
-                        data = conn.recv(1024).decode().strip()
-                        if not data:
-                            break
-                        
-                        self.process_command(data)
-                        
-                    except socket.timeout:
-                        continue
-                    except socket.error as e:
-                        print(f"Connection error: {e}")
+        #while self.running:
+        try:
+            conn, addr = self.socket.accept()
+            print(f'Connected to {addr}')
+            
+            conn.settimeout(0)  # 5 seconds for timeout
+            
+            while self.running:
+                try:
+                    data = conn.recv(1024).decode().strip()
+                    if not data:
                         break
-                
-                conn.close()
-                
-            except socket.timeout:
-                continue
-            except socket.error as e:
-                print(f"Server error: {e}")
-                if self.running:
-                    print("Waiting for new connections...")
+                    
+                    self.process_command(data)
+                    
+                except socket.timeout:
+                    continue
+                except socket.error as e:
+                    print(f"Connection error: {e}")
+                    break
+            
+            conn.close()
+            
+        #except socket.timeout:
+        #    continue
+        except socket.error as e:
+            print(f"Server error: {e}")
+            if self.running:
+                print("Waiting for new connections...")
     
     def get_latest_command(self, cmd_type: str) -> Optional[List[float]]:
         """Get the latest values for a command type"""
