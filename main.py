@@ -33,7 +33,7 @@ class main:
         
         while Shutdown == False:
             sleep(.001) 
-            self.server.run_server()
+            self.server.update()
             
             # Call the periodic method of each subsystem
             for subsystem in self.subsystems:

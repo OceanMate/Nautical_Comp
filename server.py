@@ -25,57 +25,40 @@ class ROVServer:
         return cls._instance
     
     
-    def __init__(self, port: int = 8000):
-        self.port = port
-        self.socket = None
-        self.running = False
+    def _start(self):
+        self.port = 8000
+        self.is_connected = False
+        self.shutdown = False
         self.motor_data: List[float] = [0,0,0,0,0,0]
         
-        # Setup signal handlers for graceful shutdown
-        signal.signal(signal.SIGINT, self.handle_shutdown)
-        signal.signal(signal.SIGTERM, self.handle_shutdown)
-        
-        self.start()
+        self.socket = socket.socket()
+        self.socket.setblocking(False)  # Set the socket to non-blocking mode
+        self.socket.listen(1)
     
-    def handle_shutdown(self, signum, frame):
-        """Handle shutdown signals gracefully"""
-        print("\nShutdown signal received")
-        self.stop()
-    
-    def start(self) -> None:
-        """Start the ROV server"""
+    def connect_to_server(self):
+        # Start the ROV server
         try:
-            self.socket = socket.socket()
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.socket.bind(('0.0.0.0', self.port))
-            self.socket.listen(1)
-            self.socket.settimeout(1)  # 1 second timeout for accept()
-            self.running = True
-            self.shutdown = False
-            print(f'ROV Server listening on port {self.port}...')
-            
-            #self.run_server()
-            
+            self.socket.connect(('localhost', self.port))
+            self.is_connected = True
+        except BlockingIOError:
+            pass
         except socket.error as e:
             print(f"Server failed to start: {e}")
-            self.stop()
+            self.is_connected = False
     
-    def stop(self) -> bool:
-        """Stop the ROV server gracefully"""
+    def disconnect(self):
         # Need to add code to stop all motors before shutting down
-        self.running = False
-        if self.socket:
-            try:
-                self.socket.close()
-            except socket.error:
-                pass
-            finally:
-                self.socket = None
-                self.shutdown = True
-                return self.shutdown
+        self.is_connected = False
+        try:
+            self.socket.close()
+        except socket.error:
+            pass
+        finally:
+            print("Server stopped")
     
-    def process_command(self, data: str) -> None:
-        """Process received command"""
+    def process_command(self, data: str):
+        print(f'Received data: {data}')
+        
         parts = data.split()
         if not parts:
             return
@@ -83,7 +66,8 @@ class ROVServer:
         cmd_type = parts[0].lower()
         
         if cmd_type == 'quit':
-            self.running = False
+            self.disconnect()
+            self.shutdown = True
             return
             
         if cmd_type == 'motors' and len(parts) > 1:
@@ -96,42 +80,17 @@ class ROVServer:
                 print('Invalid motor values received')
     
       
-    def run_server(self) -> None:
-        """Main server loop"""
-        #while self.running:
-        try:
-            conn, addr = self.socket.accept()
-            print(f'Connected to {addr}')
-            
-            conn.settimeout(0)  # 5 seconds for timeout
-            
-            while self.running:
-                try:
-                    data = conn.recv(1024).decode().strip()
-                    if not data:
-                        break
-                    
+    def update(self):        
+        if not self.is_connected:
+            self.connect_to_server()            
+        
+        if self.is_connected:
+            try:
+                data = self.socket.recv(1024).decode().strip()
+                if data:
                     self.process_command(data)
-                    
-                except socket.timeout:
-                    continue
-                except socket.error as e:
-                    print(f"Connection error: {e}")
-                    break
-            
-            conn.close()
-            
-        #except socket.timeout:
-        #    continue
-        except socket.error as e:
-            print(f"Server error: {e}")
-            if self.running:
-                print("Waiting for new connections...")
-    
-    def get_latest_command(self, cmd_type: str) -> Optional[List[float]]:
-        """Get the latest values for a command type"""
-        return self.command_data.get(cmd_type)
-
-if __name__ == "__main__":
-    server = ROVServer()
-    server.start()
+            except BlockingIOError:
+                pass  # No data received yet
+            except socket.error as e:
+                print(f"Connection error: {e}")
+                self.is_connected = False
