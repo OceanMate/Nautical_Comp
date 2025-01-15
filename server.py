@@ -90,7 +90,7 @@ class ROVServer:
             except ValueError:
                 print('Invalid motor values received')
       
-    def run_server(self) -> None:
+    def update(self) -> None:
         """Main server loop"""
         try:
             conn, addr = self.socket.accept()
@@ -124,9 +124,4 @@ class ROVServer:
         """Get the latest values for a command type"""
         return self.command_data.get(cmd_type)
 
-if __name__ == "__main__":
-    server = ROVServer()
-    server.start()
-    while True:
-        #print(f"am here")
-        server.run_server()
+

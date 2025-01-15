@@ -11,7 +11,7 @@ class MovementSubsystem(Subsystem):
         super().__init__()
 
         GPIO.setmode(GPIO.BCM)
-        verticalMotors = []
+        self.verticalMotors = []
         # Create vertical motors
         #verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
         #verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
