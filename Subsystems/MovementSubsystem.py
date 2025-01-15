@@ -30,21 +30,22 @@ class MovementSubsystem(Subsystem):
         for motor in self.horizontalMotors:
             motor.set_power(0)
             
-        self.sever = ROVServer()
+        self.server = ROVServer()
             
         
                         
                     
 
     def periodic(self):
-        motorData = self.server.motor_data
-
+        linearSpeeds = self.server.linear_motor_speeds
+        verticalSpeeds = self.server.vertical_motor_speeds
+        print(linearSpeeds)
         # Set the speed of the vertical motors from the motor data
         #for motor in self.verticalMotors:
         #    motor.set_power(1)
-        i = 0;
+        i = 0
         for motor in self.horizontalMotors:
-            motor.set_power(motorData[i])
+            motor.set_power(linearSpeeds[i])
             i += 1
             
         

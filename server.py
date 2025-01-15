@@ -12,7 +12,18 @@ import sys
 from typing import Dict, List, Optional
 
 class ROVServer:
-    def __init__(self, port: int = 8000):
+    _instance = None
+
+    # When a new instance is created, sets it to the same global instance
+    def __new__(cls):
+        # If the instance is None, create a new instance
+        # Otherwise, return already created instance
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._start()
+        return cls._instance
+    
+    def _start(self, port: int = 8000):
         self.port = port
         self.socket = None
         self.running = False
@@ -21,13 +32,7 @@ class ROVServer:
         # Setup signal handlers for graceful shutdown
         signal.signal(signal.SIGINT, self.handle_shutdown)
         signal.signal(signal.SIGTERM, self.handle_shutdown)
-    
-    def handle_shutdown(self, signum, frame):
-        """Handle shutdown signals gracefully"""
-        print("\nShutdown signal received")
-        self.stop()
-    
-    def start(self) -> None:
+                
         """Start the ROV server"""
         try:
             self.socket = socket.socket()
@@ -35,22 +40,24 @@ class ROVServer:
             self.socket.bind(('0.0.0.0', self.port))
             self.socket.listen(1)
             self.socket.settimeout(0.00001)  # 1 second timeout for accept()
-            self.running = True
-            self.shutdown = False
+            self.isEnabled = False
             self.linear_motor_speeds: List[float] = [0,0,0,0]
             self.vertical_motor_speeds: List[float] = [0,0]
             print(f'ROV Server listening on port {self.port}...')
             
-            self.run_server()
             
         except socket.error as e:
             print(f"Server failed to start: {e}")
             self.stop()
     
+    def handle_shutdown(self, signum, frame):
+        """Handle shutdown signals gracefully"""
+        print("\nShutdown signal received")
+        self.stop()        
+    
     def stop(self) -> bool:
         """Stop the ROV server gracefully"""
         # Need to add code to stop all motors before shutting down
-        self.running = False
         if self.socket:
             try:
                 self.socket.close()
@@ -58,7 +65,6 @@ class ROVServer:
                 pass
             finally:
                 self.socket = None
-                self.shutdown = True
                 return self.shutdown
     
     def process_command(self, data: str) -> None:
@@ -69,15 +75,15 @@ class ROVServer:
             
         cmd_type = parts[0].lower()
         
-        if cmd_type == 'quit':
-            self.running = False
+        if cmd_type == 'isEnabled':
+            self.isEnabled = parts
             return
             
         if cmd_type == 'l_motors' and len(parts) > 1:
             try:
                 values = [float(x) for x in parts[1:]]
                 # Store motor values and apply them
-                linear_motor_speeds = values
+                self.linear_motor_speeds = values
                 print(f'Received motor values: {values}')
             except ValueError:
                 print('Invalid motor values received')
@@ -94,7 +100,7 @@ class ROVServer:
         """Main server loop"""
         try:
             conn, addr = self.socket.accept()
-            print(f'Connected to {addr}')
+            #print(f'Connected to {addr}')
             
             conn.settimeout(5)  # 5 seconds for timeout
             
