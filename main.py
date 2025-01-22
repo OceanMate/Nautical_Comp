@@ -1,6 +1,5 @@
 #from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems.MovementSubsystem import MovementSubsystem
-from server import ROVServer
 from time import sleep
 from pynput import keyboard
 import sys
@@ -21,10 +20,8 @@ class main:
             on_release=self.on_release)
         listener.start()
         
-        print("am here")
 
         # Create the server object
-        self.server = ROVServer()
        
         self.loop()
 
@@ -33,7 +30,6 @@ class main:
         
         while Shutdown == False:
             sleep(.001) 
-            self.server.update()
             
             # Call the periodic method of each subsystem
             for subsystem in self.subsystems:

@@ -5,7 +5,7 @@ import socket
 import threading
 import traceback
 
-import libserver as libserver
+import transmission.libserver as libserver
 
 
 class RelayThread:
@@ -25,8 +25,8 @@ class RelayThread:
         self.sensor_data = {"IMU": (0.0, 0.0, 0.0)}
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
-        self.host = 'localhost'
-        self.port = 65432
+        self.host = self.get_ethernet_ip()
+        self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
     def set_IMU_data(self, x : float, y : float, z : float):
         self.sensor_data["IMU"] = (x, y, z)
@@ -41,17 +41,28 @@ class RelayThread:
         return self.robot_state["enabled"]
 
     def begin_thread(self):
-        thread = threading.Thread(target=self.run_server_socket)
+        thread = threading.Thread(target=self._run_server_socket)
         thread.start()
+    
+    def get_ethernet_ip(self):
+        #Retrieves the IP address of the ethernet adapter on the current system.
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('8.8.8.8', 80))  # Connect to a public DNS server to get the IP
+            ip = s.getsockname()[0]
+        finally:
+            s.close()
 
-    def accept_wrapper(self, sock):
+        return ip
+
+    def _accept_wrapper(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
         print(f"Accepted connection from {addr}")
         conn.setblocking(False)
         message = libserver.Message(self.sel, conn, addr, self.robot_state, self.sensor_data)
         self.sel.register(conn, selectors.EVENT_READ, data=message)
     
-    def run_server_socket(self):
+    def _run_server_socket(self):
         lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         lsock.bind((self.host, self.port))
@@ -65,12 +76,12 @@ class RelayThread:
                 events = self.sel.select(timeout=None)
                 for key, mask in events:
                     if key.data is None:
-                        self.accept_wrapper(key.fileobj)
+                        self._accept_wrapper(key.fileobj)
                     else:
                         message = key.data
                         try:
                             message.process_events(mask, self.sensor_data)
-                            print(f"Received: {message.robot_state}")
+                            # print(f"Received: {message.robot_state}") # Debugging
                         except Exception:
                             print(
                                 f"Main: Error: Exception for {message.addr}:\n"
@@ -81,6 +92,3 @@ class RelayThread:
             print("Caught keyboard interrupt, exiting")
         finally:
             self.sel.close()
-
-transmission = RelayThread()
-transmission.begin_thread()
