@@ -2,27 +2,25 @@
 from Subsystems.MovementSubsystem import MovementSubsystem
 from time import sleep
 from pynput import keyboard
+from transmission.ComsThread import ComsThread
 import sys
 
 
 class main:
     def __init__(self):
         # Create dictornary of subsystems
+        self.subsystems = dict(movement = MovementSubsystem())
         
-        print("am here")
-        
-        
-        self.subsystems = []
-        self.subsystems.append(MovementSubsystem())
+        # Create the coms thread
+        self.coms = ComsThread()
+        self.coms.begin_thread()
         
         listener = keyboard.Listener(
             on_press=self.on_press,
             on_release=self.on_release)
         listener.start()
-        
 
         # Create the server object
-       
         self.loop()
 
     def loop(self):
@@ -32,12 +30,11 @@ class main:
             sleep(.001) 
             
             # Call the periodic method of each subsystem
-            for subsystem in self.subsystems:
+            for subsystem in self.subsystems.values():
                 subsystem.periodic()
                 
     def shutdown(self):
-        print("am here")
-        for subsytem in self.subsystems:
+        for subsytem in self.subsystems.values():
             subsytem.end()
         sys.exit(0)
     

@@ -8,7 +8,7 @@ import traceback
 import transmission.libserver as libserver
 
 
-class RelayThread:
+class ComsThread:
     _instance = None
 
     # When a new instance is created, sets it to the same global instance
