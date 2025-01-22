@@ -4,15 +4,9 @@ import selectors
 import struct
 import sys
 
-request_search = {
-    "morpheus": "Follow the white rabbit. \U0001f430",
-    "ring": "In the caves beneath the Misty Mountains. \U0001f48d",
-    "\U0001f436": "\U0001f43e Playing ball! \U0001f3d0",
-}
-
 
 class Message:
-    def __init__(self, selector, sock, addr):
+    def __init__(self, selector, sock, addr, default_robot_state, default_sensor_data):
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -21,7 +15,9 @@ class Message:
         self._jsonheader_len = None
         self.jsonheader = None
         self.request = None
-        self.response_created = False
+        
+        self.sensor_data = default_sensor_data
+        self.robot_state = default_robot_state
 
     def _set_selector_events_mask(self, mode):
         """Set selector to listen for events: mode is 'r', 'w', or 'rw'."""
@@ -38,7 +34,7 @@ class Message:
     def _read(self):
         try:
             # Should be ready to read
-            data = self.sock.recv(4096)
+            data = self.sock.recv(4096) # type: ignore
         except BlockingIOError:
             # Resource temporarily unavailable (errno EWOULDBLOCK)
             pass
@@ -53,15 +49,13 @@ class Message:
             print(f"Sending {self._send_buffer!r} to {self.addr}")
             try:
                 # Should be ready to write
-                sent = self.sock.send(self._send_buffer)
+                sent = self.sock.send(self._send_buffer) # type: ignore
             except BlockingIOError:
                 # Resource temporarily unavailable (errno EWOULDBLOCK)
                 pass
             else:
                 self._send_buffer = self._send_buffer[sent:]
-                # Close when the buffer is drained. The response has been sent.
-                if sent and not self._send_buffer:
-                    self.close()
+
 
     def _json_encode(self, obj, encoding):
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
@@ -89,13 +83,10 @@ class Message:
         return message
 
     def _create_response_json_content(self):
-        action = self.request.get("action")
-        if action == "search":
-            query = self.request.get("value")
-            answer = request_search.get(query) or f"No match for '{query}'."
-            content = {"result": answer}
-        else:
-            content = {"result": f"Error: invalid action '{action}'."}
+        # sent the content of the message to be the sensor data
+        content = self.sensor_data
+        
+        # magic
         content_encoding = "utf-8"
         response = {
             "content_bytes": self._json_encode(content, content_encoding),
@@ -104,20 +95,16 @@ class Message:
         }
         return response
 
-    def _create_response_binary_content(self):
-        response = {
-            "content_bytes": b"First 10 bytes of request: "
-            + self.request[:10],
-            "content_type": "binary/custom-server-binary-type",
-            "content_encoding": "binary",
-        }
-        return response
-
-    def process_events(self, mask):
+    def process_events(self, mask, sensor_data):
+        self.sensor_data = sensor_data
+        
         if mask & selectors.EVENT_READ:
             self.read()
         if mask & selectors.EVENT_WRITE:
             self.write()
+        
+        # returns the robot state if you want to grab it through this function
+        return self.robot_state
 
     def read(self):
         self._read()
@@ -135,8 +122,7 @@ class Message:
 
     def write(self):
         if self.request:
-            if not self.response_created:
-                self.create_response()
+            self.create_response()
 
         self._write()
 
@@ -151,7 +137,7 @@ class Message:
             )
 
         try:
-            self.sock.close()
+            self.sock.close() # type: ignore
         except OSError as e:
             print(f"Error: socket.close() exception for {self.addr}: {e!r}")
         finally:
@@ -168,7 +154,7 @@ class Message:
 
     def process_jsonheader(self):
         hdrlen = self._jsonheader_len
-        if len(self._recv_buffer) >= hdrlen:
+        if len(self._recv_buffer) >= hdrlen: # type: ignore
             self.jsonheader = self._json_decode(
                 self._recv_buffer[:hdrlen], "utf-8"
             )
@@ -183,31 +169,35 @@ class Message:
                     raise ValueError(f"Missing required header '{reqhdr}'.")
 
     def process_request(self):
-        content_len = self.jsonheader["content-length"]
+        content_len = self.jsonheader["content-length"] # type: ignore
         if not len(self._recv_buffer) >= content_len:
             return
         data = self._recv_buffer[:content_len]
         self._recv_buffer = self._recv_buffer[content_len:]
-        if self.jsonheader["content-type"] == "text/json":
-            encoding = self.jsonheader["content-encoding"]
+        if self.jsonheader["content-type"] == "text/json": # type: ignore
+            encoding = self.jsonheader["content-encoding"] # type: ignore
             self.request = self._json_decode(data, encoding)
-            print(f"Received request {self.request!r} from {self.addr}")
+            
+            self.robot_state = dict(self.request)
         else:
-            # Binary or unknown content-type
-            self.request = data
-            print(
-                f"Received {self.jsonheader['content-type']} "
-                f"request from {self.addr}"
-            )
+            raise ValueError(f"Unsupported content type: {self.jsonheader['content-type']!r}") # type: ignore
         # Set selector to listen for write events, we're done reading.
         self._set_selector_events_mask("w")
 
     def create_response(self):
-        if self.jsonheader["content-type"] == "text/json":
+        if self.jsonheader["content-type"] == "text/json": # type: ignore
             response = self._create_response_json_content()
         else:
             # Binary or unknown content-type
-            response = self._create_response_binary_content()
+            raise ValueError(f"Unsupported content type: {self.jsonheader['content-type']!r}") # type: ignore
         message = self._create_message(**response)
-        self.response_created = True
         self._send_buffer += message
+        
+        # Set selector to listen for read events, we're done writing.
+        self._set_selector_events_mask("r")
+        
+        # Reset state to read the next message
+        self._jsonheader_len = None
+        self.jsonheader = None
+        self.request = None
+        
