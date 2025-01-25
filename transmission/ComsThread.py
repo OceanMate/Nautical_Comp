@@ -25,7 +25,8 @@ class ComsThread:
         self.sensor_data = {"IMU": (0.0, 0.0, 0.0)}
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
-        self.host = self.get_ethernet_ip()
+        self.host = '172.61.18.127' #'172.60.58.193'
+        #self.host = self.get_ethernet_ip()
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
     def set_IMU_data(self, x : float, y : float, z : float):
@@ -42,6 +43,7 @@ class ComsThread:
 
     def begin_thread(self):
         thread = threading.Thread(target=self._run_server_socket)
+        thread.daemon = True
         thread.start()
     
     def get_ethernet_ip(self):
@@ -81,7 +83,8 @@ class ComsThread:
                         message = key.data
                         try:
                             message.process_events(mask, self.sensor_data)
-                            # print(f"Received: {message.robot_state}") # Debugging
+                            print(f"Received: {message.robot_state}") # Debugging
+                            self.robot_state = message.robot_state
                         except Exception:
                             print(
                                 f"Main: Error: Exception for {message.addr}:\n"

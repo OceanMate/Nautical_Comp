@@ -3,7 +3,7 @@ from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems.Modules.BilgePumpMotor import BilgePumpMotor
 
 from Constants import Constants
-from server import ROVServer
+from transmission.ComsThread import ComsThread
 import RPi.GPIO as GPIO
 
 class MovementSubsystem(Subsystem):
@@ -13,8 +13,8 @@ class MovementSubsystem(Subsystem):
         GPIO.setmode(GPIO.BCM)
         self.verticalMotors = []
         # Create vertical motors
-        #verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
-        #verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
+        self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
+        #self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
 
         self.horizontalMotors = []
         # Create horizontal motors
@@ -28,25 +28,25 @@ class MovementSubsystem(Subsystem):
             motor.set_power(0)
 
         for motor in self.horizontalMotors:
-            motor.set_power(0)
+            motor.set_power(0)     
             
-        self.server = ROVServer()
-            
+        self.server = ComsThread()       
         
-                        
+
                     
 
     def periodic(self):
-        linearSpeeds = self.server.linear_motor_speeds
-        verticalSpeeds = self.server.vertical_motor_speeds
+        linearSpeeds = self.server.get_horizontal_motors()
+        verticalSpeeds = self.server.get_vertical_motors()
         
         # Set the speed of the vertical motors from the motor data
-        #for motor in self.verticalMotors:
-        #    motor.set_power(1)
+        self.verticalMotors[0].set_power(0.1)
+        '''for motor in self.verticalMotors:
+            motor.set_power(0.05)'''
         i = 0
         for motor in self.horizontalMotors:
-            #motor.set_power(linearSpeeds[i])
-            motor.set_power(-0.1)
+            motor.set_power(linearSpeeds[i])
+            #motor.set_power(-0.1)
             i += 1
             
         
