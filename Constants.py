@@ -16,8 +16,8 @@ class Constants:
     # Might be overly complicated
     
     # vertical motor pins
-    frontVerticalMotorPin = -1
-    backVerticalMotorPin = -1
+    frontVerticalMotorPin = 18
+    backVerticalMotorPin = 12
 
     # rasberry pi ports x,y motors are connected to
     # Forward and backwards are digital pins and speeds are anolog pins
