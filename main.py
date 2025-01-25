@@ -1,9 +1,9 @@
 #from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems import IMU
 from Subsystems.MovementSubsystem import MovementSubsystem
-from server import ROVServer
 from time import sleep
 from pynput import keyboard
+from transmission.ComsThread import ComsThread
 import sys
 from gpiozero import LED
 
@@ -12,19 +12,18 @@ class main:
     def __init__(self):
         
         # Create dictornary of subsystems
-        self.subsystems = []
-        self.subsystems.append(MovementSubsystem())
-        #self.subsystems.append(IMU())
+        self.subsystems = dict(movement = MovementSubsystem())
+        
+        # Create the coms thread
+        self.coms = ComsThread()
+        self.coms.begin_thread()
         
         listener = keyboard.Listener(
             on_press=self.on_press,
             on_release=self.on_release)
         listener.start()
-        
 
         # Create the server object
-        self.server = ROVServer()
-       
         self.loop()
 
     def loop(self):
@@ -34,17 +33,15 @@ class main:
         #try:
         while Shutdown == False:
             sleep(.001) 
-            self.server.update()
             
             # Call the periodic method of each subsystem
-            for subsystem in self.subsystems:
+            for subsystem in self.subsystems.values():
                 subsystem.periodic()
         #finally:
             #self.shutdown()
                 
     def shutdown(self):
-        
-        for subsytem in self.subsystems:
+        for subsytem in self.subsystems.values():
             subsytem.end()
         print("am here")
         sys.exit()
