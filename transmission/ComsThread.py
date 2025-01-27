@@ -25,8 +25,9 @@ class ComsThread:
         self.sensor_data = {"IMU": (0.0, 0.0, 0.0)}
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
-        self.host = '172.61.18.127' #'172.60.58.193'
-        #self.host = self.get_ethernet_ip()
+        # Get the IP address of the machine
+        host_name  = socket.gethostname()
+        self.host = socket.gethostbyname(host_name) #'172.60.58.193'
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
     def set_IMU_data(self, x : float, y : float, z : float):
@@ -45,17 +46,6 @@ class ComsThread:
         thread = threading.Thread(target=self._run_server_socket)
         thread.daemon = True
         thread.start()
-    
-    def get_ethernet_ip(self):
-        #Retrieves the IP address of the ethernet adapter on the current system.
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(('8.8.8.8', 80))  # Connect to a public DNS server to get the IP
-            ip = s.getsockname()[0]
-        finally:
-            s.close()
-
-        return ip
 
     def _accept_wrapper(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
