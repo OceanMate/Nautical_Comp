@@ -1,16 +1,15 @@
 from time import sleep
-from gpiozero import PWMLED
+from gpiozero import PWMLED, PWMOutputDevice
 
 class ApisqueenMotor:
     def __init__(self, id):
         self.id = id
         
-        self.motor = PWMLED(pin=self.id, frequency=50)
+        self.motor = PWMOutputDevice(pin=self.id, frequency=50)
         print(self.motor.frequency)
         #Apisqueen Motors need to be set up to there neutral position
         self.stop()
         sleep(3)
-       
 
     # input power is a number between -1 and 1
     def set_power(self, power):
