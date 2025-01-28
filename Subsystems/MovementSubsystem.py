@@ -40,7 +40,7 @@ class MovementSubsystem(Subsystem):
         verticalSpeeds = self.server.get_vertical_motors()
         
         # Set the speed of the vertical motors from the motor data
-        self.verticalMotors[0].set_power(0.1)
+        self.verticalMotors[0].set_power(1)
         '''for motor in self.verticalMotors:
             motor.set_power(0.05)'''
         i = 0
