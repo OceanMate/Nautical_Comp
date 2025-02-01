@@ -4,16 +4,15 @@ from Subsystems.Modules.BilgePumpMotor import BilgePumpMotor
 
 from Constants import Constants
 from transmission.ComsThread import ComsThread
-import RPi.GPIO as GPIO
 
 class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-        GPIO.setmode(GPIO.BCM)
+       
         self.verticalMotors = []
         # Create vertical motors
-        self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
+        #self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
         #self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
 
         self.horizontalMotors = []
@@ -36,17 +35,18 @@ class MovementSubsystem(Subsystem):
                     
 
     def periodic(self):
+        #rint(self.server.get_horizontal_motors())
         linearSpeeds = self.server.get_horizontal_motors()
         verticalSpeeds = self.server.get_vertical_motors()
         
         # Set the speed of the vertical motors from the motor data
-        self.verticalMotors[0].set_power(1)
+       # self.verticalMotors[0].set_power(1)
         '''for motor in self.verticalMotors:
             motor.set_power(0.05)'''
         i = 0
         for motor in self.horizontalMotors:
             motor.set_power(linearSpeeds[i])
-            #motor.set_power(-0.1)
+            #motor.set_power(-0.5)
             i += 1
             
         

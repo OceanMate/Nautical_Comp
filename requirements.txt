@@ -1,6 +1,3 @@
-pigpio
-rpi.gpio
-spidev
 gpiozero
 adafruit-circuitpython-bno055
 pynput

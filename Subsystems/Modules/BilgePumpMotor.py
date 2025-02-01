@@ -30,5 +30,6 @@ class BilgePumpMotor:
 
         # set the speed of the motor
         power = abs(power)
+        power = Constants.clamp(power,0,1)
         self.speed.value = power
         

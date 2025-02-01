@@ -5,8 +5,6 @@ In order to auto install required python Libraries run command below in the dire
 pip install -r requirements.txt
 
 Required Libraries installs comands
-    pip install rpi.gpio pigpio
-    pip install spidev
     pip install gpiozero
     pip install adafruit-circuitpython-bno055
     pip install pynput

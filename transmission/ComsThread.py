@@ -26,12 +26,12 @@ class ComsThread:
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
         # Get the IP address of the machine
-        host_name  = socket.gethostname()
-        self.host = socket.gethostbyname(host_name) #'172.60.58.193'
+        self.host = '172.61.18.127'
+        
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
-    def set_IMU_data(self, x : float, y : float, z : float):
-        self.sensor_data["IMU"] = (x, y, z)
+    def set_IMU_data(self, xyz : tuple):
+        self.sensor_data["IMU"] = xyz
         
     def get_horizontal_motors(self):
         return self.robot_state["horizontal_motors"]
@@ -73,7 +73,7 @@ class ComsThread:
                         message = key.data
                         try:
                             message.process_events(mask, self.sensor_data)
-                            print(f"Received: {message.robot_state}") # Debugging
+                            #print(f"Received: {message.robot_state}") # Debugging
                             self.robot_state = message.robot_state
                         except Exception:
                             print(

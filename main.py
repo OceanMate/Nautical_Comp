@@ -1,5 +1,5 @@
 #from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
-from Subsystems import IMU
+from Subsystems.IMU import IMU
 from Subsystems.MovementSubsystem import MovementSubsystem
 from time import sleep
 from pynput import keyboard
@@ -10,9 +10,9 @@ from gpiozero import LED
 
 class main:
     def __init__(self):
-        
+        imu = IMU()
         # Create dictornary of subsystems
-        self.subsystems = dict(movement = MovementSubsystem())
+        self.subsystems = dict(movement = MovementSubsystem(), imu = IMU())
         
         # Create the coms thread
         self.coms = ComsThread()
