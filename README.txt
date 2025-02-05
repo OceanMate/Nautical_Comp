@@ -10,6 +10,7 @@ Required Libraries installs comands
     pip install pynput
 
 For ssh to pi with putty
+    connect to 172.61.18.127
     login as: materov
     password: 1234
     run the commands:
