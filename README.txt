@@ -8,3 +8,4 @@ Required Libraries installs comands
     pip install gpiozero
     pip install adafruit-circuitpython-bno055
     pip install pynput
+

@@ -46,9 +46,9 @@ class MovementSubsystem(Subsystem):
         i = 0
         for motor in self.horizontalMotors:
             motor.set_power(linearSpeeds[i])
-            #motor.set_power(-0.5)
-            i += 1
-            
+            motor.update()
+            i += 1   
+        
         
             
             
