@@ -1,3 +1,5 @@
 gpiozero
 adafruit-circuitpython-bno055
 pynput
+cv2
+pillow

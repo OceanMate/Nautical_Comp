@@ -3,6 +3,7 @@ from Subsystems.IMU import IMU
 from Subsystems.MovementSubsystem import MovementSubsystem
 from time import sleep
 from transmission.ComsThread import ComsThread
+from transmission.CameraComs import CameraComs
 from gpiozero import LED
 
 
@@ -16,6 +17,9 @@ class main:
         self.coms = ComsThread()
         self.coms.begin_thread()
         
+        # Create the camera coms
+        self.camera = CameraComs()
+        self.camera.start()
 
         # Create the server object
         self.loop()
