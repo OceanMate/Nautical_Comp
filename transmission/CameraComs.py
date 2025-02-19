@@ -7,7 +7,7 @@ from PIL import Image
 import threading
 
 class CameraComs:
-    def __init__(self, host='localhost', port=9999):
+    def __init__(self, host='172.61.34.186', port=9999):
         self.client_socket = socket.socket()
         self.client_socket.connect((host, port))
         self.connection = self.client_socket.makefile('wb')

@@ -26,7 +26,7 @@ class ComsThread:
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
         # Get the IP address of the machine
-        self.host = '172.61.18.127'
+        self.host = '172.61.34.186'
         
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
