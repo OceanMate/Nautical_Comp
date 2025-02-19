@@ -18,7 +18,7 @@ class BilgePumpMotor:
         
         # acceleration smoothing variables
         self.actualPower = 0
-        self.time_between_steps = 0.1
+        self.time_between_steps = 0.05
         self.lastStep = time.time()
         
     
@@ -26,17 +26,18 @@ class BilgePumpMotor:
         # acceleration smoothing for the motor
         # using time to update based on time not cycles
         if(time.time() - self.lastStep >= self.time_between_steps):
-            
-            if(self.actualPower < self.desiredPower):
-                self.actualPower += 0.01
+            if(abs(self.desiredPower)-abs(self.actualPower) < 0.1):
+                self.actualPower = self.desiredPower
+            elif(self.actualPower < self.desiredPower):
+                self.actualPower += 0.1
             elif(self.actualPower > self.desiredPower):
-                self.actualPower -= 0.01
+                self.actualPower -= 0.1
             self.lastStep = time.time()
             self.set_power_real(self.actualPower)
         pass
     
     def set_power(self, power):
-        power = Constants.clamp(power,0,1)
+        power = Constants.clamp(power,-1,1)
         self.desiredPower = power
 
     # input power is a number between -1 and 1
