@@ -7,7 +7,7 @@ from PIL import Image
 import threading
 
 class CameraComs:
-    def __init__(self, host='172.61.34.186', port=9999):
+    def __init__(self, host='172.60.58.193', port=46389):
         self.client_socket = socket.socket()
         self.client_socket.connect((host, port))
         self.connection = self.client_socket.makefile('wb')
@@ -15,9 +15,10 @@ class CameraComs:
         
     def get_available_cameras(self):
         cameras = []
-        for i in range(5):  # Assuming a maximum of 4 cameras
+        for i in range(5):  # Assuming a maximum of 5 cameras
             cap = cv2.VideoCapture(i)
             if cap is not None and cap.isOpened():
+                print(f"Camera {i} connected")
                 cameras.append(cap)
             else:
                 cap.release()
@@ -37,8 +38,8 @@ class CameraComs:
                 image_len = image_stream.getbuffer().nbytes
                 self.connection.write(struct.pack('<L', image_len))
                 self.connection.write(image_stream.read())
-                
                 time.sleep(0.01)
+                
         finally:
             self.connection.write(struct.pack('<L', 0))
             self.connection.close()

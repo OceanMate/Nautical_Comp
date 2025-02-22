@@ -3,3 +3,4 @@ adafruit-circuitpython-bno055
 pynput
 opencv-python
 pillow
+lgpio

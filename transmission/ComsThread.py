@@ -73,7 +73,7 @@ class ComsThread:
                         message = key.data
                         try:
                             message.process_events(mask, self.sensor_data)
-                            print(f"Received: {message.robot_state}") # Debugging
+                            # print(f"Received: {message.robot_state}") # Debugging
                             self.robot_state = message.robot_state
                         except Exception:
                             print(

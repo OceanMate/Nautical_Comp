@@ -14,8 +14,8 @@ class main:
         self.subsystems = dict(movement = MovementSubsystem(), imu = IMU())
         
         # Create the coms thread
-        self.coms = ComsThread()
-        self.coms.begin_thread()
+        # self.coms = ComsThread()
+        # self.coms.begin_thread()
         
         # Create the camera coms
         self.camera = CameraComs()
