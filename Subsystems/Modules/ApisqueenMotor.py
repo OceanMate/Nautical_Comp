@@ -18,6 +18,7 @@ class ApisqueenMotor:
         #Apisqueen Motors need to be set up to there neutral position
         self.stop()
         sleep(3)
+        print("motor should be unlocked")
 
     # input power is a number between -1 and 1
     def set_power(self, power):
@@ -35,6 +36,6 @@ class ApisqueenMotor:
         self.motor_channel.duty_cycle = map_power_16bit
 
     def stop(self):
-        self.set_power(0.5)
+        self.set_power(0)
     
  

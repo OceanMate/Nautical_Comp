@@ -17,7 +17,6 @@ class BilgePumpMotor:
         # led doesn't work
         self.forward = PWMOutputDevice(self.forwardID)
         self.backward = PWMOutputDevice(self.backwardID)
-        self.speed = PWMOutputDevice(self.speedID)
         
         i2c = busio.I2C(board.SCL, board.SDA)
         self.pca = adafruit_pca9685.PCA9685(i2c)
@@ -63,5 +62,5 @@ class BilgePumpMotor:
         power = abs(power)
         power_16bit = int(power * 65535)
 
-        self.speed.value = power_16bit
+        self.speed_channel.duty_cycle = power_16bit
         
