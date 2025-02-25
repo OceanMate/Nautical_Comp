@@ -1,7 +1,10 @@
 from gpiozero import LED
-from gpiozero import PWMLED
+from gpiozero import PWMOutputDevice
 from Constants import Constants
 import time
+import board
+import busio
+import adafruit_pca9685
 
 
 class BilgePumpMotor:
@@ -12,9 +15,15 @@ class BilgePumpMotor:
          
         # I hate gpiozero need to make everything a pwmled for some reason
         # led doesn't work
-        self.forward = PWMLED(self.forwardID)
-        self.backward = PWMLED(self.backwardID)
-        self.speed = PWMLED(self.speedID)
+        self.forward = PWMOutputDevice(self.forwardID)
+        self.backward = PWMOutputDevice(self.backwardID)
+        self.speed = PWMOutputDevice(self.speedID)
+        
+        i2c = busio.I2C(board.SCL, board.SDA)
+        self.pca = adafruit_pca9685.PCA9685(i2c)
+        self.pca.frequency = 100
+
+        self.speed_channel = self.pca.channels[self.speedID]
         
         # acceleration smoothing variables
         self.actualPower = 0
@@ -52,6 +61,7 @@ class BilgePumpMotor:
 
         # set the speed of the motor
         power = abs(power)
-        power = Constants.clamp(power,0,1)
-        self.speed.value = power
+        power_16bit = int(power * 65535)
+
+        self.speed.value = power_16bit
         

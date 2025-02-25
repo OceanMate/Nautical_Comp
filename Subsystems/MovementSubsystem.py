@@ -41,12 +41,11 @@ class MovementSubsystem(Subsystem):
         
         # Set the speed of the vertical motors from the motor data
        # self.verticalMotors[0].set_power(1)
-        '''for motor in self.verticalMotors:
-            motor.set_power(0.05)'''
+        for motor in self.verticalMotors:
+            motor.set_power(0.5)
         i = 0
         for motor in self.horizontalMotors:
-            motor.set_power(linearSpeeds[i])
-            motor.update()
+            motor.setpower(0.5)
             i += 1   
         
         
