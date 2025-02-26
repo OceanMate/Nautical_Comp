@@ -31,10 +31,9 @@ class MovementSubsystem(Subsystem):
 
         # Set the speed of the motors to 0 and wait to unlock the motors
         for motor in self.verticalMotors:
-            motor.set_power(0)
-
+            motor.unlock()
         for motor in self.horizontalMotors:
-            motor.set_power(0)
+            motor.unlock()
         
         time.sleep(5)
         print("motor should be unlocked")
@@ -68,7 +67,10 @@ class MovementSubsystem(Subsystem):
             
             
     def end(self):
-        pass
+        for motor in self.verticalMotors:
+            motor.stop()
+        for motor in self.horizontalMotors:
+            motor.stop()
 
 
 
