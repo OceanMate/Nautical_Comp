@@ -12,15 +12,15 @@ class Constants:
     # Might be overly complicated
     
     # vertical motor pins
-    frontVerticalMotorPin = 3
-    backVerticalMotorPin = 2
+    frontVerticalMotorPin = 0
+    backVerticalMotorPin = 0
 
     # rasberry pi ports x,y motors are connected to
     # Forward and backwards are digital pins and speeds are anolog pins
-    mfl = BilgeMotorIDs(17, 27, 0)
-    mfr = BilgeMotorIDs(22, 10, 1)
-    mbr = BilgeMotorIDs(5, 6, 4)
-    mbl = BilgeMotorIDs(13, 19, 5)
+    mfl = BilgeMotorIDs(17, 27, 1)
+    mfr = BilgeMotorIDs(22, 10, 2)
+    mbr = BilgeMotorIDs(5, 6, 3)
+    mbl = BilgeMotorIDs(13, 19, 4)
 
     # math scaling function 
     def map(x: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:
