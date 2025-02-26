@@ -7,7 +7,6 @@ import board
 from transmission.ComsThread import ComsThread
 
 class IMU(Subsystem):
-    
     def __init__(self):
         
         i2c = board.I2C() # uses board.SCL and board.SDA
@@ -25,8 +24,6 @@ class IMU(Subsystem):
         #print("Gyro X:%.2f, Y: %.2f, Z: %.2f radians/s" % (self.getGyroData()))
         
         self.comsThead.set_IMU_data(self.getGyroData())
-        
-        
-        
+           
     def end(self):
         pass

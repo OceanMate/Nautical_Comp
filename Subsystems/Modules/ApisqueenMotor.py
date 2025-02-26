@@ -13,13 +13,11 @@ class ApisqueenMotor:
         self.pca = adafruit_pca9685.PCA9685(i2c)
         self.pca.frequency = 50
 
-        self.motor_channel = self.pca.channels[0]
+        self.motor_channel = self.pca.channels[id]
 
         #Apisqueen Motors need to be set up to there neutral position
-        self.stop()
-        sleep(5)
-        print("motor should be unlocked")
-
+    
+        
     # input power is a number between -1 and 1
     def set_power(self, power):
         # pulse_width is in microseconds

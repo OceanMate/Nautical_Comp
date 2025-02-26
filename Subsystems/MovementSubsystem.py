@@ -1,3 +1,4 @@
+import time
 from Subsystems.Subsystem import Subsystem
 from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 
@@ -8,7 +9,6 @@ class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
 
-       
         self.verticalMotors = []
         # Create vertical motors
         self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
@@ -16,18 +16,23 @@ class MovementSubsystem(Subsystem):
 
         self.horizontalMotors = []
         # Create horizontal motors
-
+        self.horizontalMotors.append(ApisqueenMotor(Constants.frontLeftMotorPin))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.frontRightMotorPin))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.backRightMotorPin))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.backLeftMotorPin))
         
-        # Set the speed of the motors to 0
+
+        # Set the speed of the motors to 0 and wait to unlock the motors
         for motor in self.verticalMotors:
             motor.set_power(0)
 
         for motor in self.horizontalMotors:
-            motor.set_power(0)     
+            motor.set_power(0)
+        
+        time.sleep(5)
             
         self.server = ComsThread()       
         
-
                     
 
     def periodic(self):
@@ -39,6 +44,7 @@ class MovementSubsystem(Subsystem):
        # self.verticalMotors[0].set_power(1)
         for motor in self.verticalMotors:
             motor.set_power(0.5)
+            
         i = 0
         for motor in self.horizontalMotors:
             motor.set_power(0.5)
