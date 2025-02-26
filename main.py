@@ -30,7 +30,7 @@ class main:
                 # Call the periodic method of each subsystem
                 for subsystem in self.subsystems.values():
                     subsystem.periodic()
-        except KeyboardInterrupt:
+        except:
             self.shutdown()
                 
     def shutdown(self):

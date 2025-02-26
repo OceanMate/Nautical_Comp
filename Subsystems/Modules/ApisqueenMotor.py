@@ -48,9 +48,6 @@ class ApisqueenMotor:
             self.lastStep = time.time()
             self._set_power_real(self.actualPower)
 
-    def stop(self):
-        self.set_power(0)
-    
-    def unlock(self):
+    def emergency_stop(self):
         self._set_power_real(0)
 
