@@ -1,22 +1,11 @@
 from time import sleep
 from Constants import Constants
-import board
-import busio
-import adafruit_pca9685
+
 
 
 class ApisqueenMotor:
-    def __init__(self, id):
-        self.id = id
-        
-        i2c = busio.I2C(board.SCL, board.SDA)
-        self.pca = adafruit_pca9685.PCA9685(i2c)
-        self.pca.frequency = 50
-
-        self.motor_channel = self.pca.channels[id]
-
-        #Apisqueen Motors need to be set up to there neutral position
-    
+    def __init__(self, id, pca):
+        self.motor_channel = pca.channels[id]    
         
     # input power is a number between -1 and 1
     def set_power(self, power):

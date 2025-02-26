@@ -4,22 +4,29 @@ from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 
 from Constants import Constants
 from transmission.ComsThread import ComsThread
+import board
+import busio
+import adafruit_pca9685
 
 class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
+        
+        i2c = busio.I2C(board.SCL, board.SDA)
+        pca = adafruit_pca9685.PCA9685(i2c)
+        pca.frequency = 50
 
         self.verticalMotors = []
         # Create vertical motors
-        self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin))
-        #self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin))
+        self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin, pca))
+        #self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
 
         self.horizontalMotors = []
         # Create horizontal motors
-        self.horizontalMotors.append(ApisqueenMotor(Constants.frontLeftMotorPin))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.frontRightMotorPin))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.backRightMotorPin))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.backLeftMotorPin))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.frontLeftMotorPin, pca))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.frontRightMotorPin, pca))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.backRightMotorPin, pca))
+        self.horizontalMotors.append(ApisqueenMotor(Constants.backLeftMotorPin, pca))
         
 
         # Set the speed of the motors to 0 and wait to unlock the motors
@@ -30,6 +37,7 @@ class MovementSubsystem(Subsystem):
             motor.set_power(0)
         
         time.sleep(5)
+        print("motor should be unlocked")
             
         self.server = ComsThread()       
         
@@ -42,14 +50,21 @@ class MovementSubsystem(Subsystem):
         
         # Set the speed of the vertical motors from the motor data
        # self.verticalMotors[0].set_power(1)
-        for motor in self.verticalMotors:
-            motor.set_power(0.5)
+        # for motor in self.verticalMotors:
+        #     motor.set_power(1)
             
-        i = 0
-        for motor in self.horizontalMotors:
-            motor.set_power(0.5)
-            i += 1   
+        # i = 0
+        # for motor in self.horizontalMotors:
+        #     motor.set_power(0.5)
+        #     i += 1   
         
+        self.verticalMotors[0].set_power(1)
+        
+        time.sleep(3)
+        
+        self.verticalMotors[0].set_power(0)
+        
+        time.sleep(3)
         
             
             
