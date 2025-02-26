@@ -45,8 +45,8 @@ class MovementSubsystem(Subsystem):
 
     def periodic(self):
         #rint(self.server.get_horizontal_motors())
-        linearSpeeds = self.server.get_horizontal_motors()
-        verticalSpeeds = self.server.get_vertical_motors()
+        # linearSpeeds = self.server.get_horizontal_motors()
+        # verticalSpeeds = self.server.get_vertical_motors()
         
         # Set the speed of the vertical motors from the motor data
        # self.verticalMotors[0].set_power(1)
@@ -58,19 +58,18 @@ class MovementSubsystem(Subsystem):
         #     motor.set_power(0.5)
         #     i += 1   
         
-        self.verticalMotors[0].set_power(1)
-        
-        time.sleep(3)
-        
-        self.verticalMotors[0].set_power(0)
-        
-        time.sleep(3)
+        current_time = time.time()
+        if int(current_time) % 6 < 3:
+            self.verticalMotors[0].set_power(1)
+        else:
+            self.verticalMotors[0].set_power(0)
+        self.verticalMotors[0].update()
         
             
             
     def end(self):
         pass
-        
-            
+
+
 
 
