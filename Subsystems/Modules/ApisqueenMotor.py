@@ -9,8 +9,11 @@ class ApisqueenMotor:
         # acceleration smoothing variables
         self.actualPower = 0
         self.desiredPower = 0
-        self.time_between_steps = 0.05
+        
+        self.time_between_steps = 0.001
+        self.change_per_second = 2
         self.lastStep = time.time()
+
         
     # input power is a number between -1 and 1
     def set_power(self, power):
@@ -35,12 +38,13 @@ class ApisqueenMotor:
         # acceleration smoothing for the motor
         # using time to update based on time not cycles
         if time.time() - self.lastStep >= self.time_between_steps:
-            if abs(self.desiredPower - self.actualPower) < 0.1:
+            step_change = self.change_per_second * (time.time() - self.lastStep)
+            if abs(self.desiredPower - self.actualPower) < step_change:
                 self.actualPower = self.desiredPower
             elif self.actualPower < self.desiredPower:
-                self.actualPower += 0.1
+                self.actualPower += step_change
             elif self.actualPower > self.desiredPower:
-                self.actualPower -= 0.1
+                self.actualPower -= step_change
             self.lastStep = time.time()
             self._set_power_real(self.actualPower)
 
@@ -49,4 +53,4 @@ class ApisqueenMotor:
     
     def unlock(self):
         self._set_power_real(0)
- 
+
