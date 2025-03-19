@@ -38,17 +38,10 @@ class ComsThread:
             stats = psutil.net_if_stats()
             
             available_networks = {}
-            for intface, addr_list in addresses.items():
-                if any(getattr(addr, 'address').startswith("169.254") for addr in addr_list):
-                    continue
-                elif intface in stats and getattr(stats[intface], "isup"):
-                    available_networks.append(intface)
-
-            print(available_networks)
 
             for intface, addr_list in addresses.items():
                 # Check if the interface is up and contains 'Ethernet' in its name
-                if intface in stats and stats[intface].isup and "eth" in intface.lower():
+                if intface in stats and stats[intface].isup:
                     for addr in addr_list:
                         if addr.family == socket.AF_INET and not addr.address.startswith("169.254"):
                             available_networks[intface] = addr.address
