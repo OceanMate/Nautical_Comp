@@ -44,7 +44,7 @@ class ComsThread:
                 elif intface in stats and getattr(stats[intface], "isup"):
                     available_networks.append(intface)
 
-            print(available_networks)
+            prit(available_networks)
 
             for intface, addr_list in addresses.items():
                 # Check if the interface is up and contains 'Ethernet' in its name
