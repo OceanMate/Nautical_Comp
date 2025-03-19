@@ -4,8 +4,4 @@ Instead of doing all of the processing, it talks with a laptop above water via a
 In order to auto install required python Libraries run command below in the directory
 pip install -r requirements.txt
 
-Required Libraries installs comands
-    pip install gpiozero
-    pip install adafruit-circuitpython-bno055
-    pip install pynput
 
