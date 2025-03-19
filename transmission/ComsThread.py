@@ -44,11 +44,11 @@ class ComsThread:
                 elif intface in stats and getattr(stats[intface], "isup"):
                     available_networks.append(intface)
 
-            prit(available_networks)
+            print(available_networks)
 
             for intface, addr_list in addresses.items():
                 # Check if the interface is up and contains 'Ethernet' in its name
-                if intface in stats and stats[intface].isup and "eth" in intface:
+                if intface in stats and stats[intface].isup and "eth" in intface.lower():
                     for addr in addr_list:
                         # Ensure it's an IPv4 address and not a link-local address (169.254.x.x)
                         if addr.family == socket.AF_INET and not addr.address.startswith("169.254"):
