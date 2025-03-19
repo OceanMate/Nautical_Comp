@@ -8,9 +8,18 @@ from gpiozero import LED
 
 class main:
     def __init__(self):
-        imu = IMU()
         # Create dictornary of subsystems
-        self.subsystems = dict(movement = MovementSubsystem(), imu = IMU())
+        self.subsystems = {}
+        
+        try:
+            self.subsystems["movement"] = MovementSubsystem()
+        except:
+            print("Error setting up motors")
+        
+        try:
+            self.subsystems["imu"] = IMU()
+        except:
+            print("Error setting up IMU")
         
         # Create the coms thread
         self.coms = ComsThread()

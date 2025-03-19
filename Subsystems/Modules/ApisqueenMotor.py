@@ -27,7 +27,7 @@ class ApisqueenMotor:
         # map power from -1 to 1 to 0.05 to 0.1
         map_power = (power + 1) * 0.025 + 0.05
         
-        print(map_power)
+        # print(map_power)
         
         # convert map_power to a 16-bit value
         map_power_16bit = int(map_power * 65535)
