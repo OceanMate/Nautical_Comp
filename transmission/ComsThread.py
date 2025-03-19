@@ -37,7 +37,7 @@ class ComsThread:
             addresses = psutil.net_if_addrs()
             stats = psutil.net_if_stats()
             
-            available_networks = []
+            available_networks = {}
             for intface, addr_list in addresses.items():
                 if any(getattr(addr, 'address').startswith("169.254") for addr in addr_list):
                     continue
@@ -50,12 +50,13 @@ class ComsThread:
                 # Check if the interface is up and contains 'Ethernet' in its name
                 if intface in stats and stats[intface].isup and "eth" in intface.lower():
                     for addr in addr_list:
-                        # Ensure it's an IPv4 address and not a link-local address (169.254.x.x)
                         if addr.family == socket.AF_INET and not addr.address.startswith("169.254"):
-                            print(f"Found active interface: {intface} with IP {addr.address}")
-                            return addr.address
+                            available_networks[intface] = addr.address
 
-            raise RuntimeError("No active interface found with 'Ethernet' in its name")
+            print(available_networks)
+
+            if not available_networks:
+                raise RuntimeError("No active interface found with 'Ethernet' in its name")
         except Exception as e:
             print(f"Error retrieving Ethernet IP: {e}")
             return "127.0.0.1"  # Fallback to localhost if no Ethernet IP is found
