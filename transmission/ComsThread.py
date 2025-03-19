@@ -40,11 +40,10 @@ class ComsThread:
             available_networks = {}
 
             for intface, addr_list in addresses.items():
-                # Check if the interface is up and contains 'Ethernet' in its name
-                if intface in stats and stats[intface].isup:
-                    for addr in addr_list:
-                        if addr.family == socket.AF_INET and not addr.address.startswith("169.254"):
-                            available_networks[intface] = addr.address
+                if any(getattr(addr, 'address').startswith("169.254") for addr in addr_list):
+                    continue
+                elif intface in stats and getattr(stats[intface], "isup"):
+                    available_networks[intface] = [addr.address for addr in addr_list if addr.family == socket.AF_INET]
 
             print(available_networks)
 
