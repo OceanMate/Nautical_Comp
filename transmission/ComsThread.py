@@ -4,6 +4,7 @@ import selectors
 import socket
 import threading
 import traceback
+import psutil
 
 import transmission.libserver as libserver
 
@@ -26,9 +27,29 @@ class ComsThread:
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
         # Get the IP address of the machine
-        self.host = '172.61.34.186'
+        self.host = self._get_ethernet_ip()  # Use the function to get the IP address
         
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
+        
+    def _get_ethernet_ip(self):
+        """Retrieve the IP address of any active network with 'Ethernet' in its name."""
+        try:
+            addresses = psutil.net_if_addrs()
+            stats = psutil.net_if_stats()
+
+            for intface, addr_list in addresses.items():
+                # Check if the interface is up and contains 'Ethernet' in its name
+                if intface in stats and stats[intface].isup and "Ethernet" in intface:
+                    for addr in addr_list:
+                        # Ensure it's an IPv4 address and not a link-local address (169.254.x.x)
+                        if addr.family == socket.AF_INET and not addr.address.startswith("169.254"):
+                            print(f"Found active interface: {intface} with IP {addr.address}")
+                            return addr.address
+
+            raise RuntimeError("No active interface found with 'Ethernet' in its name")
+        except Exception as e:
+            print(f"Error retrieving Ethernet IP: {e}")
+            return "127.0.0.1"  # Fallback to localhost if no Ethernet IP is found
     
     def set_IMU_data(self, xyz : tuple):
         self.sensor_data["IMU"] = xyz
