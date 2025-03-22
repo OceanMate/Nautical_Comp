@@ -4,4 +4,7 @@ Instead of doing all of the processing, it talks with a laptop above water via a
 In order to auto install required python Libraries run command below in the directory
 pip install -r requirements.txt
 
+To edit ethernet settings of pi use command below and select ethernet
+nmtui
+
 

@@ -27,8 +27,8 @@ class ComsThread:
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
         
         # Get the IP address of the machine
-        self.host = self._get_ethernet_ip()  # Use the function to get the IP address
-        
+        self.host = '192.168.1.2' # Use the function to get the IP address
+    
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
         
     def _get_ethernet_ip(self):
@@ -43,7 +43,7 @@ class ComsThread:
                 if any(getattr(addr, 'address').startswith("169.254") for addr in addr_list):
                     continue
                 elif intface in stats and getattr(stats[intface], "isup"):
-                    available_networks[intface] = [addr.address for addr in addr_list if addr.family == socket.AF_INET]
+                    available_networks[intface] = [addr.address for addr in addr_list]
 
             print(available_networks)
 
