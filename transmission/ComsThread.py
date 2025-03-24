@@ -30,28 +30,6 @@ class ComsThread:
         self.host = '192.168.1.2' # Use the function to get the IP address
     
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
-        
-    def _get_ethernet_ip(self):
-        """Retrieve the IP address of any active network with 'Ethernet' in its name."""
-        try:
-            addresses = psutil.net_if_addrs()
-            stats = psutil.net_if_stats()
-            
-            available_networks = {}
-
-            for intface, addr_list in addresses.items():
-                if any(getattr(addr, 'address').startswith("169.254") for addr in addr_list):
-                    continue
-                elif intface in stats and getattr(stats[intface], "isup"):
-                    available_networks[intface] = [addr.address for addr in addr_list]
-
-            print(available_networks)
-
-            if not available_networks:
-                raise RuntimeError("No active interface found with 'Ethernet' in its name")
-        except Exception as e:
-            print(f"Error retrieving Ethernet IP: {e}")
-            return "127.0.0.1"  # Fallback to localhost if no Ethernet IP is found
     
     def set_IMU_data(self, xyz : tuple):
         self.sensor_data["IMU"] = xyz
