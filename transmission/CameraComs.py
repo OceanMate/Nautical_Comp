@@ -38,7 +38,6 @@ class CameraComs:
                 image_len = image_stream.getbuffer().nbytes
                 self.connection.write(struct.pack('<L', image_len))
                 self.connection.write(image_stream.read())
-                time.sleep(0.01)
                 
         finally:
             self.connection.write(struct.pack('<L', 0))
