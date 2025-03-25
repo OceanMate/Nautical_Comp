@@ -12,7 +12,6 @@ class CameraComs:
         self.port = port
         self.cameras = self.get_available_cameras()  # Assuming a maximum of 4 cameras
         self.sockets = {}  # Dictionary to store sockets for each camera
-        self.locks = {}  # Dictionary to store a lock for each camera
 
     def get_available_cameras(self):
         cameras = []
@@ -33,7 +32,6 @@ class CameraComs:
                 client_socket.connect((self.host, self.port + camera_index))  # Use unique port for each camera
                 connection = client_socket.makefile('wb')
                 self.sockets[camera_index] = (client_socket, connection)
-                self.locks[camera_index] = threading.Lock()  # Create a lock for this camera
                 print(f"Connection established for camera {camera_index}")
                 break
             except (socket.error, ConnectionRefusedError) as e:
@@ -41,42 +39,29 @@ class CameraComs:
                 time.sleep(5)
 
     def handle_client(self, camera, camera_index):
-        while True:  # Keep trying to reconnect if the camera disconnects
-            self.connect(camera_index)  # Establish connection for this camera
-            client_socket, connection = self.sockets[camera_index]
-            lock = self.locks[camera_index]  # Get the lock for this camera
-            try:
-                while True:
-                    ret, frame = camera.read()
-                    if not ret:
-                        print(f"Camera {camera_index} frame read failed. Releasing resources.")
-                        break
-                    # Resize the frame to reduce data size
-                    frame = cv2.resize(frame, (640, 480))  # Resize to 640x480
-                    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    img_pil = Image.fromarray(img)
-                    image_stream = io.BytesIO()
-                    # Save with reduced quality to minimize size
-                    img_pil.save(image_stream, format='JPEG', quality=50)  # Set quality to 50
-                    image_stream.seek(0)
-                    image_len = image_stream.getbuffer().nbytes
-                    with lock:  # Ensure thread-safe access to the connection
-                        connection.write(struct.pack('<L', image_len))
-                        connection.flush()  # Ensure data is sent immediately
-                        connection.write(image_stream.read())
-                        connection.flush()  # Ensure data is sent immediately
-            except (socket.error, BrokenPipeError) as e:
-                print(f"Connection lost for camera {camera_index}: {e}. Reconnecting...")
-                continue  # Reconnect if the connection is lost
-            finally:
-                with lock:  # Ensure thread-safe cleanup
-                    connection.write(struct.pack('<L', 0))
-                    connection.flush()  # Ensure the termination signal is sent
-                    connection.close()
-                    client_socket.close()
-                print(f"Resources released for camera {camera_index}")
-                camera.release()
-                break  # Exit the loop if the camera is no longer available
+        self.connect(camera_index)  # Establish connection for this camera
+        client_socket, connection = self.sockets[camera_index]
+        try:
+            while True:
+                ret, frame = camera.read()
+                if not ret:
+                    print(f"Camera {camera_index} frame read failed. Releasing resources.")
+                    break
+                # Resize the frame to reduce data size
+                frame = cv2.resize(frame, (640, 480))  # Resize to 640x480
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img_pil = Image.fromarray(img)
+                image_stream = io.BytesIO()
+                # Save with reduced quality to minimize size
+                img_pil.save(image_stream, format='JPEG', quality=50)  # Set quality to 50
+                image_stream.seek(0)
+                image_len = image_stream.getbuffer().nbytes
+                connection.write(struct.pack('<L', image_len))
+                connection.flush()  # Ensure data is sent immediately
+                connection.write(image_stream.read())
+                connection.flush()  # Ensure data is sent immediately
+        finally:
+            print("An error has broken the connection")
 
     def start(self):
         for index, camera in enumerate(self.cameras):
