@@ -8,11 +8,11 @@ import threading
 
 class CameraComs:
     def __init__(self, host='192.168.1.1', port=46389):
-        self.client_socket = socket.socket()
-        self.client_socket.connect((host, port))
-        self.connection = self.client_socket.makefile('wb')
+        self.host = host
+        self.port = port
         self.cameras = self.get_available_cameras()  # Assuming a maximum of 4 cameras
-        
+        self.sockets = {}  # Dictionary to store sockets for each camera
+
     def get_available_cameras(self):
         cameras = []
         for i in range(5):  # Assuming a maximum of 5 cameras
@@ -24,7 +24,22 @@ class CameraComs:
                 cap.release()
         return cameras
 
-    def handle_client(self, camera):
+    def connect(self, camera_index):
+        while True:
+            try:
+                client_socket = socket.socket()
+                client_socket.connect((self.host, self.port))
+                connection = client_socket.makefile('wb')
+                self.sockets[camera_index] = (client_socket, connection)
+                print(f"Connection established for camera {camera_index}")
+                break
+            except (socket.error, ConnectionRefusedError) as e:
+                print(f"Connection failed for camera {camera_index}: {e}. Retrying in 5 seconds...")
+                time.sleep(5)
+
+    def handle_client(self, camera, camera_index):
+        self.connect(camera_index)  # Establish connection for this camera
+        client_socket, connection = self.sockets[camera_index]
         try:
             while True:
                 ret, frame = camera.read()
@@ -39,18 +54,20 @@ class CameraComs:
                 img_pil.save(image_stream, format='JPEG', quality=50)  # Set quality to 50
                 image_stream.seek(0)
                 image_len = image_stream.getbuffer().nbytes
-                self.connection.write(struct.pack('<L', image_len))
-                self.connection.flush()  # Ensure data is sent immediately
-                self.connection.write(image_stream.read())
-                self.connection.flush()  # Ensure data is sent immediately
-                
+                connection.write(struct.pack('<L', image_len))
+                connection.flush()  # Ensure data is sent immediately
+                connection.write(image_stream.read())
+                connection.flush()  # Ensure data is sent immediately
+        except (socket.error, BrokenPipeError) as e:
+            print(f"Connection lost for camera {camera_index}: {e}. Reconnecting...")
+            self.connect(camera_index)  # Reconnect if the connection is lost
         finally:
-            self.connection.write(struct.pack('<L', 0))
-            self.connection.flush()  # Ensure the termination signal is sent
-            self.connection.close()
-            self.client_socket.close()
+            connection.write(struct.pack('<L', 0))
+            connection.flush()  # Ensure the termination signal is sent
+            connection.close()
+            client_socket.close()
             camera.release()
 
     def start(self):
-        for camera in self.cameras:
-            threading.Thread(target=self.handle_client, args=(camera,)).start()
+        for index, camera in enumerate(self.cameras):
+            threading.Thread(target=self.handle_client, args=(camera, index)).start()
