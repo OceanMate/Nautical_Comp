@@ -71,3 +71,4 @@ class CameraComs:
     def start(self):
         for index, camera in enumerate(self.cameras):
             threading.Thread(target=self.handle_client, args=(camera, index)).start()
+# [Warn:1@8.202] global cap_v4l.cpp:803 requestBuffers VIDEOIO(V4L2:/dev/video0): failed VIDIOC_REQBUFS: errno=19 (no such device)
