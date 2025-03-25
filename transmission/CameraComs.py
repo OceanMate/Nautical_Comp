@@ -17,10 +17,11 @@ class CameraComs:
         cameras = []
         for i in range(5):  # Assuming a maximum of 5 cameras
             cap = cv2.VideoCapture(i)
-            if cap is not None and cap.isOpened():
+            if cap.isOpened():
                 print(f"Camera {i} connected")
                 cameras.append(cap)
             else:
+                print(f"Camera {i} not available")
                 cap.release()
         return cameras
 
