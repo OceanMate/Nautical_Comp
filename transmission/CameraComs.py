@@ -10,20 +10,22 @@ class CameraComs:
     def __init__(self, host='192.168.1.1', port=46389):
         self.host = host
         self.port = port
-        self.cameras = self.get_available_cameras()  # Assuming a maximum of 4 cameras
+        self.cameras, self.cv2_indexes = self.get_available_cameras()  # Assuming a maximum of 4 cameras
         self.sockets = {}  # Dictionary to store sockets for each camera
 
     def get_available_cameras(self):
         cameras = []
+        cv2_indexes = []
         for i in range(5):  # Assuming a maximum of 5 cameras
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
                 print(f"Camera {i} connected")
                 cameras.append(cap)
+                cv2_indexes.append(i)
             else:
                 print(f"Camera {i} not available")
                 cap.release()
-        return cameras
+        return cameras, cv2_indexes
 
     def connect(self, camera_index):
         while True:
@@ -38,15 +40,21 @@ class CameraComs:
                 print(f"Connection failed for camera {camera_index}: {e}. Retrying in 5 seconds...")
                 time.sleep(5)
 
-    def handle_client(self, camera, camera_index):
+    def handle_client(self, camera, camera_index, cv2_index):
         self.connect(camera_index)  # Establish connection for this camera
         client_socket, connection = self.sockets[camera_index]
         try:
             while True:
                 ret, frame = camera.read()
                 if not ret:
-                    print(f"Camera {camera_index} frame read failed. Retrying...")
-                    time.sleep(0.1)  # Add a small delay before retrying
+                    print(f"Camera {camera_index} frame read failed. Attempting to reinitialize...")
+                    camera.release()  # Release the current camera
+                    camera = cv2.VideoCapture(cv2_index)  # Reinitialize the camera using the index
+                    if not camera.isOpened():
+                        print(f"Failed to reinitialize camera {camera_index}. Retrying in 1 second...")
+                        time.sleep(1)  # Wait before retrying
+                        continue
+                    print(f"Camera {camera_index} successfully reinitialized.")
                     continue
                 # Resize the frame to reduce data size
                 frame = cv2.resize(frame, (640, 480))  # Resize to 640x480
@@ -66,4 +74,4 @@ class CameraComs:
 
     def start(self):
         for index, camera in enumerate(self.cameras):
-            threading.Thread(target=self.handle_client, args=(camera, index), daemon=True).start()
+            threading.Thread(target=self.handle_client, args=(camera, index, self.cv2_indexes[index]), daemon=True).start()
