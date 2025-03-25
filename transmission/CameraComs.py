@@ -45,8 +45,9 @@ class CameraComs:
             while True:
                 ret, frame = camera.read()
                 if not ret:
-                    print(f"Camera {camera_index} frame read failed. Releasing resources.")
-                    break
+                    print(f"Camera {camera_index} frame read failed. Retrying...")
+                    time.sleep(0.1)  # Add a small delay before retrying
+                    continue
                 # Resize the frame to reduce data size
                 frame = cv2.resize(frame, (640, 480))  # Resize to 640x480
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
