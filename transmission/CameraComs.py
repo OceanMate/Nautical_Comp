@@ -71,7 +71,6 @@ class CameraComs:
                 connection.flush()  # Ensure data is sent immediately
                 connection.write(image_stream.read())
                 connection.flush()  # Ensure data is sent immediately
-                time.sleep(0.01)
         finally:
             print("An error has broken the connection")
 
