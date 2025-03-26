@@ -51,7 +51,7 @@ class CameraComs:
                     camera.release()  # Release the current camera
                     camera = cv2.VideoCapture(cv2_index)  # Reinitialize the camera using the index
                     if not camera.isOpened():
-                        print(f"Failed to reinitialize camera {camera_index}. Retrying in 1 second...")
+                        print(f"Failed to reinitialize at {cv2_index}. Retrying in 1 second...")
                         time.sleep(1)  # Wait before retrying
                         continue
                     print(f"Camera {camera_index} successfully reinitialized.")
@@ -69,6 +69,7 @@ class CameraComs:
                 connection.flush()  # Ensure data is sent immediately
                 connection.write(image_stream.read())
                 connection.flush()  # Ensure data is sent immediately
+                time.sleep(0.01)
         finally:
             print("An error has broken the connection")
 
