@@ -19,7 +19,10 @@ class CameraComs:
         for i in range(5):  # Assuming a maximum of 5 cameras
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                print(f"Camera {i} connected")
+                # Set the resolution to 640x480
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                print(f"Camera {i} connected with resolution 640x480")
                 cameras.append(cap)
                 cv2_indexes.append(i)
             else:
@@ -57,7 +60,6 @@ class CameraComs:
                     print(f"Camera {camera_index} successfully reinitialized.")
                     continue
                 # Resize the frame to reduce data size
-                frame = cv2.resize(frame, (640, 480))  # Resize to 640x480
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 img_pil = Image.fromarray(img)
                 image_stream = io.BytesIO()
