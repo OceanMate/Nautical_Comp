@@ -1,3 +1,6 @@
+import board
+import busio
+import adafruit_pca9685
 
 class Constants:
     # vertical motor pins
@@ -13,6 +16,10 @@ class Constants:
     # claw motor pins
     clawRollMotorPin = 6
     clawClampMotorPin = 7
+    
+    i2c = busio.I2C(board.SCL, board.SDA)
+    pca = adafruit_pca9685.PCA9685(i2c)
+    pca.frequency = 50
 
     # math scaling function 
     def map(x: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:

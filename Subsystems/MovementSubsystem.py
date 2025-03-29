@@ -4,17 +4,12 @@ from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 
 from Constants import Constants
 from transmission.ComsThread import ComsThread
-import board
-import busio
-import adafruit_pca9685
 
 class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
         
-        i2c = busio.I2C(board.SCL, board.SDA)
-        pca = adafruit_pca9685.PCA9685(i2c)
-        pca.frequency = 50
+        pca = Constants.pca
 
         self.verticalMotors = []
         # Create vertical motors

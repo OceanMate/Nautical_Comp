@@ -1,5 +1,6 @@
 from Subsystems.IMU import IMU
 from Subsystems.MovementSubsystem import MovementSubsystem
+from Subsystems.ClawSubsystem import ClawSubsystem
 from time import sleep
 from transmission.ComsThread import ComsThread
 from transmission.CameraComs import CameraComs
