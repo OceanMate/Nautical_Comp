@@ -24,7 +24,11 @@ class ComsThread:
     def _start(self):
         self.sel = selectors.DefaultSelector()
         self.sensor_data = {"IMU": (0.0, 0.0, 0.0)}
-        self.robot_state = {"horizontal_motors": (0, 0, 0, 0), "vertical_motors": (0, 0), "enabled": False}
+        self.robot_state = {"horizontal_motors": (0, 0, 0, 0), 
+                            "vertical_motors": (0, 0), 
+                            "claw_clamp": 0.0,
+                            "claw_roll": 0.0,
+                            "enabled": False, }
         
         # Get the IP address of the machine
         self.host = '192.168.1.2' # Use the function to get the IP address
@@ -39,6 +43,12 @@ class ComsThread:
     
     def get_vertical_motors(self):
         return self.robot_state["vertical_motors"]
+    
+    def get_claw_clamp(self):
+        return self.robot_state["claw_clamp"]
+
+    def get_claw_roll(self):
+        return self.robot_state["claw_roll"]
     
     def get_enabled(self):
         return self.robot_state["enabled"]

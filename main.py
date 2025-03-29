@@ -1,9 +1,7 @@
-#from Subsystems.Modules.ApisqueenMotor import ApisqueenMotor
 from Subsystems.IMU import IMU
 from Subsystems.MovementSubsystem import MovementSubsystem
 from time import sleep
 from transmission.ComsThread import ComsThread
-from gpiozero import LED
 from transmission.CameraComs import CameraComs
 
 
@@ -21,6 +19,11 @@ class main:
             self.subsystems["imu"] = IMU()
         except:
             print("Error setting up IMU")
+            
+        try:
+            self.subsystems["claw"] = ClawSubsystem()
+        except:
+            print("Error setting up claw")
         
         # Create the coms thread
         self.coms = ComsThread()
@@ -48,9 +51,7 @@ class main:
                 
     def shutdown(self):
         for subsytem in self.subsystems.values():
-            subsytem.end()
-        print("am here")
-    
+            subsytem.end()    
         
 
 # Run the main class 

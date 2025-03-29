@@ -9,6 +9,10 @@ class Constants:
     frontRightMotorPin = 1
     backLeftMotorPin = 2
     backRightMotorPin = 3
+    
+    # claw motor pins
+    clawRollMotorPin = 6
+    clawClampMotorPin = 7
 
     # math scaling function 
     def map(x: float, in_min: float, in_max: float, out_min: float, out_max: float) -> float:
