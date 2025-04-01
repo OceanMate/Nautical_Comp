@@ -16,3 +16,6 @@ class Servo:
         map_power_16bit = int(map_power * 65535)
         
         self.motor_channel.duty_cycle = map_power_16bit
+        
+    def stop(self):
+        self.motor_channel.duty_cycle = 0

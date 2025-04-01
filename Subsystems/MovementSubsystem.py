@@ -14,7 +14,7 @@ class MovementSubsystem(Subsystem):
         self.verticalMotors = []
         # Create vertical motors
         self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin, pca))
-        #self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
+        self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
 
         self.horizontalMotors = []
         # Create horizontal motors

@@ -9,29 +9,23 @@ class ClawSubsystem(Subsystem):
         super().__init__()
         
         pca = Constants.pca
-        
-        print("am here")
-        # Initialize claw motors here
-        #self.clampMotor = Servo(Constants.clawClampMotorPin, pca)
+                # Initialize claw motors here
+        self.clampMotor = Servo(Constants.clawClampMotorPin, pca)
         self.rollMotor = Servo(Constants.clawRollMotorPin, pca)
-        print("am here")
         
-        #self.clampMotor.set_power(0)  # Set initial power to 0
-        self.rollMotor.set_power(0)  # Set initial power to 0
+        self.clampMotor.stop()
+        self.rollMotor.stop()
         
         self.server = ComsThread()
 
     def periodic(self):
         clamp_power = self.server.get_claw_clamp()
         roll_power = self.server.get_claw_roll()
-        
-        clamp_power  =-1
-        roll_power =1
-         
+                 
         # Update claw motor state if needed
-        #self.clampMotor.set_power(clamp_power)
+        self.clampMotor.set_power(clamp_power)
         self.rollMotor.set_power(roll_power)
         
     def end(self):
-        self.stop_claw()  # Ensure claw is stopped when ending the subsystem
-        pass
+        self.clampMotor.stop()
+        self.rollMotor.stop()
