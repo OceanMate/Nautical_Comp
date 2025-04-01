@@ -25,7 +25,7 @@ class ClawSubsystem(Subsystem):
         clamp_power = self.server.get_claw_clamp()
         roll_power = self.server.get_claw_roll()
         
-        clamp_power  =1
+        clamp_power  =-1
         roll_power =1
          
         # Update claw motor state if needed
