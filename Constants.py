@@ -4,18 +4,18 @@ import adafruit_pca9685
 
 class Constants:
     # vertical motor pins
-    frontVerticalMotorPin = 4
-    backVerticalMotorPin = 5
+    frontVerticalMotorPin = 2
+    backVerticalMotorPin = 1
 
     # horizontal motor pins
-    frontLeftMotorPin = 0
-    frontRightMotorPin = 1
-    backLeftMotorPin = 2
-    backRightMotorPin = 3
+    frontLeftMotorPin = 4
+    frontRightMotorPin = 3
+    backLeftMotorPin = 5
+    backRightMotorPin = 6
     
     # claw motor pins
-    clawRollMotorPin = 6
-    clawClampMotorPin = 7
+    clawRollMotorPin = 7
+    clawClampMotorPin = 0
     
     i2c = busio.I2C(board.SCL, board.SDA)
     pca = adafruit_pca9685.PCA9685(i2c)
