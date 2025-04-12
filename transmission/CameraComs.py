@@ -19,10 +19,10 @@ class CameraComs:
         for i in range(5):  # Assuming a maximum of 5 cameras
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                # Set the resolution to 640x480
-                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-                print(f"Camera {i} connected with resolution 640x480")
+                # Set the resolution to 320x240
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+                print(f"Camera {i} connected with resolution 320x240")
                 cameras.append(cap)
                 cv2_indexes.append(i)
             else:
@@ -64,13 +64,14 @@ class CameraComs:
                 img_pil = Image.fromarray(img)
                 image_stream = io.BytesIO()
                 # Save with reduced quality to minimize size
-                img_pil.save(image_stream, format='JPEG', quality=50)  # Set quality to 50
+                img_pil.save(image_stream, format='JPEG', quality=25)  # Set quality to 50
                 image_stream.seek(0)
                 image_len = image_stream.getbuffer().nbytes
                 connection.write(struct.pack('<L', image_len))
                 connection.flush()  # Ensure data is sent immediately
                 connection.write(image_stream.read())
                 connection.flush()  # Ensure data is sent immediately
+                time.sleep(0.1)
         finally:
             print("An error has broken the connection")
 
