@@ -9,10 +9,10 @@ class CameraComs:
     def __init__(self, host='localhost', port=46389):
         self.host = host
         self.port = port
-        self.cameras, self.cv2_indexes = self.get_available_cameras(max_cameras=2)  # Assuming a maximum of 4 cameras
+        self.cameras, self.cv2_indexes = self.get_available_cameras()
         self.sockets = {}  # Dictionary to store sockets for each camera
 
-    def get_available_cameras(self, max_cameras, resolution=(640, 480)):
+    def get_available_cameras(self, max_cameras = 4, resolution=(640, 480)):
         cameras = []
         cv2_indexes = []
         for i in range(max_cameras):
@@ -20,6 +20,7 @@ class CameraComs:
             if cap.isOpened():
                 cap.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
                 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+                cap.set(cv2.CAP_PROP_FPS, 30)
                 print(f"Camera {i} connected with resolution {resolution[0]}x{resolution[1]}")
                 cameras.append(cap)
                 cv2_indexes.append(i)
