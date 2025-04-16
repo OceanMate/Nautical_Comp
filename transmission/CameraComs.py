@@ -1,51 +1,46 @@
 import io
 import socket
-import struct
 import time
 import cv2
 from PIL import Image
 import threading
 
 class CameraComs:
-    def __init__(self, host='192.168.1.1', port=46389):
+    def __init__(self, host='localhost', port=46389):
         self.host = host
         self.port = port
-        self.cameras, self.cv2_indexes = self.get_available_cameras()  # Assuming a maximum of 4 cameras
+        self.cameras, self.cv2_indexes = self.get_available_cameras(max_cameras=2)  # Assuming a maximum of 4 cameras
         self.sockets = {}  # Dictionary to store sockets for each camera
 
-    def get_available_cameras(self):
+    def get_available_cameras(self, max_cameras, resolution=(640, 480)):
         cameras = []
         cv2_indexes = []
-        for i in range(5):  # Assuming a maximum of 5 cameras
+        for i in range(max_cameras):
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                # Set the resolution to 320x240
-                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-                print(f"Camera {i} connected with resolution 320x240")
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+                print(f"Camera {i} connected with resolution {resolution[0]}x{resolution[1]}")
                 cameras.append(cap)
                 cv2_indexes.append(i)
             else:
-                print(f"Camera {i} not available")
-                cap.release()
+                cap.release()  # Ensure resources are released for unresponsive cameras
         return cameras, cv2_indexes
 
     def connect(self, camera_index):
         while True:
             try:
-                client_socket = socket.socket()
-                client_socket.connect((self.host, self.port + camera_index))  # Use unique port for each camera
-                connection = client_socket.makefile('wb')
-                self.sockets[camera_index] = (client_socket, connection)
-                print(f"Connection established for camera {camera_index}")
+                client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                self.sockets[camera_index] = client_socket
+                print(f"Camera {camera_index} connecting to {self.host}:{self.port + camera_index}")
                 break
-            except (socket.error, ConnectionRefusedError) as e:
+            except socket.error as e:
                 print(f"Connection failed for camera {camera_index}: {e}. Retrying in 5 seconds...")
                 time.sleep(5)
 
     def handle_client(self, camera, camera_index, cv2_index):
         self.connect(camera_index)  # Establish connection for this camera
-        client_socket, connection = self.sockets[camera_index]
+        client_socket = self.sockets[camera_index]
         try:
             while True:
                 ret, frame = camera.read()
@@ -64,14 +59,10 @@ class CameraComs:
                 img_pil = Image.fromarray(img)
                 image_stream = io.BytesIO()
                 # Save with reduced quality to minimize size
-                img_pil.save(image_stream, format='JPEG', quality=25)  # Set quality to 50
+                img_pil.save(image_stream, format='JPEG', quality=50)  # Set quality to 50
                 image_stream.seek(0)
-                image_len = image_stream.getbuffer().nbytes
-                connection.write(struct.pack('<L', image_len))
-                connection.flush()  # Ensure data is sent immediately
-                connection.write(image_stream.read())
-                connection.flush()  # Ensure data is sent immediately
-                time.sleep(0.1)
+                image_data = image_stream.read()
+                client_socket.sendto(image_data, (self.host, self.port + camera_index))
         finally:
             print("An error has broken the connection")
 
