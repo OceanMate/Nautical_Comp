@@ -6,7 +6,7 @@ from PIL import Image
 import threading
 
 class CameraComs:
-    def __init__(self, host='localhost', port=46389):
+    def __init__(self, host='192.168.1.1', port=46389):
         self.host = host
         self.port = port
         self.cameras, self.cv2_indexes = self.get_available_cameras()
