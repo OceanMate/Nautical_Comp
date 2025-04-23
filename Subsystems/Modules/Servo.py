@@ -9,8 +9,8 @@ class Servo:
         # pulse_width should be between 1000 and 2000
         Constants.clamp(power, -1, 1)
         
-        # map power from -1 to 1 to 0.05 to 0.1
-        map_power = (power + 1) * 0.025 + 0.05
+        # map power from -1 to 1 to 0.025 to 0.125
+        map_power = (power + 1) * 0.05 + 0.025
                 
         # convert map_power to a 16-bit value
         map_power_16bit = int(map_power * 65535)
