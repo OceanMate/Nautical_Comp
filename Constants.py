@@ -4,13 +4,13 @@ import adafruit_pca9685
 
 class Constants:
     # vertical motor pins
-    frontVerticalMotorPin = 2
-    backVerticalMotorPin = 1
+    frontVerticalMotorPin = 4
+    backVerticalMotorPin = 5
 
     # horizontal motor pins
-    frontLeftMotorPin = 4
+    frontLeftMotorPin = 1
     frontRightMotorPin = 3
-    backLeftMotorPin = 5
+    backLeftMotorPin = 2
     backRightMotorPin = 6
     
     # claw motor pins

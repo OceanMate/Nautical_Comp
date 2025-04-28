@@ -38,7 +38,6 @@ class main:
 
     def loop(self):
         Shutdown = False
-    
         
         try:
             while Shutdown == False:
