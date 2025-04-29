@@ -14,8 +14,8 @@ class Constants:
     backRightMotorPin = 2
     
     # claw motor pins
-    clawRollMotorPin = 7
-    clawClampMotorPin = 0
+    clawRollMotorPin = 0
+    clawClampMotorPin = 7
     
     i2c = busio.I2C(board.SCL, board.SDA)
     pca = adafruit_pca9685.PCA9685(i2c)
