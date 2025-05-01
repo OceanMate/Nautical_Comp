@@ -44,8 +44,11 @@ class main:
                 sleep(.001) 
                 
                 # Call the periodic method of each subsystem
-                for subsystem in self.subsystems.values():
-                    subsystem.periodic()
+                if self.coms.get_enabled():
+                    for subsystem in self.subsystems.values():
+                        subsystem.periodic()
+                else:
+                    self.shutdown()
         except:
             self.shutdown()
                 
