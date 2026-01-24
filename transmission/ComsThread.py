@@ -23,7 +23,7 @@ class ComsThread:
     
     def _start(self):
         self.sel = selectors.DefaultSelector()
-        self.sensor_data = {"IMU": (0.0, 0.0, 0.0)}
+        self.sensor_data = {"IMU": (0.0, 0.0, 0.0, 0.0)}
         self.robot_state = {"horizontal_motors": (0, 0, 0, 0), 
                             "vertical_motors": (0, 0), 
                             "claw_clamp": 0.0,
@@ -35,8 +35,8 @@ class ComsThread:
     
         self.port = 65432 # doesn't matter what this value is, as long as it matches landlubber
     
-    def set_IMU_data(self, xyz : tuple):
-        self.sensor_data["IMU"] = xyz
+    def set_IMU_data(self, xyzw : tuple[float, float, float, float]):
+        self.sensor_data["IMU"] = xyzw
         
     def get_horizontal_motors(self):
         return self.robot_state["horizontal_motors"]

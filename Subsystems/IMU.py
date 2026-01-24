@@ -16,14 +16,12 @@ class IMU(Subsystem):
         self.gyro = []
         self.comsThead = ComsThread()
 
-    def getGyroData(self):
-        return self.sensor.gyro
-
     def periodic(self):
-        #FOR DEBUG
-        #print("Gyro X:%.2f, Y: %.2f, Z: %.2f radians/s" % (self.getGyroData()))
+        raw_quat = self.sensor.quaternion
         
-        self.comsThead.set_IMU_data(self.getGyroData())
+        # reorder from (w, x, y, z) to (x, y, z, w)
+        quanterion = (raw_quat[1], raw_quat[2], raw_quat[3], raw_quat[0])
+        self.comsThead.set_IMU_data(quanterion)
            
     def end(self):
         pass
