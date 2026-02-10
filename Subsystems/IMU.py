@@ -4,6 +4,7 @@ from Subsystems.Subsystem import Subsystem
 # SPDX-License-Identifier: MIT
 import adafruit_bno055
 import board
+import digitalio
 from transmission.ComsThread import ComsThread
 
 class IMU(Subsystem):
