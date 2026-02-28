@@ -9,19 +9,36 @@ class MovementSubsystem(Subsystem):
     def __init__(self):
         super().__init__()
         
+        print("Setting up motors")
         pca = Constants.pca
+        print("PCA setup complete")
 
         self.verticalMotors = []
         # Create vertical motors
-        self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin, pca))
-        self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
+        try:
+            self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin, pca))
+            self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
+        except:
+            print("Error setting up vertical motors")
 
         self.horizontalMotors = []
         # Create horizontal motors
-        self.horizontalMotors.append(ApisqueenMotor(Constants.frontLeftMotorPin, pca))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.frontRightMotorPin, pca))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.backRightMotorPin, pca))
-        self.horizontalMotors.append(ApisqueenMotor(Constants.backLeftMotorPin, pca))
+        try:
+            self.horizontalMotors.append(ApisqueenMotor(Constants.frontLeftMotorPin, pca))
+        except:
+            print("Error setting up front left motor")
+        try:
+            self.horizontalMotors.append(ApisqueenMotor(Constants.frontRightMotorPin, pca))
+        except:
+            print("Error setting up front right motor")
+        try:
+            self.horizontalMotors.append(ApisqueenMotor(Constants.backRightMotorPin, pca))
+        except:
+            print("Error setting up back right motor")
+        try:
+            self.horizontalMotors.append(ApisqueenMotor(Constants.backLeftMotorPin, pca))
+        except:
+            print("Error setting up back left motor")
         
 
         # Set the speed of the motors to 0 and wait to unlock the motors
@@ -46,12 +63,14 @@ class MovementSubsystem(Subsystem):
         i = 0
         for motor in self.verticalMotors:
             motor.set_power(verticalSpeeds[i])
+            #motor.set_power(1)
             motor.update()
             i += 1
             
         i = 0
         for motor in self.horizontalMotors:
             motor.set_power(linearSpeeds[i])
+            #motor.set_power(1)
             motor.update()
             i += 1
         
