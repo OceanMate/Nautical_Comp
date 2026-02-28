@@ -24,8 +24,8 @@ class ComsThread:
     def _start(self):
         self.sel = selectors.DefaultSelector()
         self.sensor_data = {"IMU": (0.0, 0.0, 0.0, 0.0)}
-        self.robot_state = {"horizontal_motors": (0, 0, 0, 0), 
-                            "vertical_motors": (0, 0), 
+        self.robot_state = {"horizontal_motors": (0.0, 0.0, 0.0, 0.0), 
+                            "vertical_motors": (0.0, 0.0, 0.0), 
                             "claw_clamp": 0.0,
                             "claw_roll": 0.0,
                             "enabled": False, }

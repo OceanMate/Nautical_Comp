@@ -16,7 +16,8 @@ class MovementSubsystem(Subsystem):
         self.verticalMotors = []
         # Create vertical motors
         try:
-            self.verticalMotors.append(ApisqueenMotor(Constants.frontVerticalMotorPin, pca))
+            self.verticalMotors.append(ApisqueenMotor(Constants.frontLeftVerticalMotorPin, pca))
+            self.verticalMotors.append(ApisqueenMotor(Constants.frontRightVerticalMotorPin, pca))
             self.verticalMotors.append(ApisqueenMotor(Constants.backVerticalMotorPin, pca))
         except:
             print("Error setting up vertical motors")
