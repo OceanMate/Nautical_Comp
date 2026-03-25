@@ -23,7 +23,8 @@ class ComsThread:
     
     def _start(self):
         self.sel = selectors.DefaultSelector()
-        self.sensor_data = {"IMU": (0.0, 0.0, 0.0, 0.0)}
+        self.sensor_data = {"IMU": (0.0, 0.0, 0.0, 0.0),
+                            "water_sensor":False}
         self.robot_state = {"horizontal_motors": (0.0, 0.0, 0.0, 0.0), 
                             "vertical_motors": (0.0, 0.0, 0.0), 
                             "claw_clamp": 0.0,
@@ -37,7 +38,10 @@ class ComsThread:
     
     def set_IMU_data(self, xyzw : tuple[float, float, float, float]):
         self.sensor_data["IMU"] = xyzw
-        
+
+    def set_water_data(self, isWaterDetected:bool):
+        self.sensor_data["water_sensor"] = isWaterDetected
+
     def get_horizontal_motors(self):
         return self.robot_state["horizontal_motors"]
     

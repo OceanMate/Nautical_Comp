@@ -1,4 +1,5 @@
 from Subsystems.IMU import IMU
+from Subsystems.WaterSensor import WaterSensor
 from Subsystems.MovementSubsystem import MovementSubsystem
 from Subsystems.ClawSubsystem import ClawSubsystem
 from time import sleep
@@ -25,6 +26,11 @@ class main:
             self.subsystems["claw"] = ClawSubsystem()
         except:
             print("Error setting up claw")
+         
+        try:
+            self.subsystems["water_sensor"] = WaterSensor()
+        except:
+            print("Error setting up watersensor")
         
         # Create the coms thread
         self.coms = ComsThread()

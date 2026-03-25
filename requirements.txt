@@ -4,3 +4,4 @@ opencv-python
 pillow
 adafruit-circuitpython-pca9685
 adafruit-circuitpython-servokit
+rpi-lgpio
