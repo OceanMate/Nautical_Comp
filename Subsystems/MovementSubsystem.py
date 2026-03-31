@@ -56,7 +56,7 @@ class MovementSubsystem(Subsystem):
                     
 
     def periodic(self):
-        # print(self.server.get_horizontal_motors())
+        print(self.server.get_horizontal_motors())
         linearSpeeds = self.server.get_horizontal_motors()
         verticalSpeeds = self.server.get_vertical_motors()
         

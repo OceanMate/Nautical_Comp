@@ -22,7 +22,7 @@ class ApisqueenMotor:
     def _set_power_real(self, power):
         # pulse_width is in microseconds
         # pulse_width should be between 1000 and 2000
-        
+                
         # map power from -1 to 1 to 0.05 to 0.1
         map_power = (power + 1) * 0.025 + 0.05
         
