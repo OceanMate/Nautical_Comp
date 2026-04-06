@@ -15,8 +15,8 @@ class Constants:
     backVerticalMotorPin = 6
     
     # claw motor pins
-    clawRollMotorPin = 15
-    clawClampMotorPin = 16
+    clawRollMotorPin = 14
+    clawClampMotorPin = 15
 
     #watersensor pins
     waterSensorPin = 13
