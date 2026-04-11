@@ -13,10 +13,11 @@ class WaterSensor(Subsystem):
     def __init__(self, pin):
         super().__init__()
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(Constants.waterSensorPin,GPIO.IN)
+        GPIO.setup(Constants.waterSensorPin, GPIO.IN)
         self.comsThead = ComsThread()
 
     def is_water_detected(self):
+        print("Water detected: " + str(GPIO.input(Constants.waterSensorPin)))
         return GPIO.input(Constants.waterSensorPin)
     
     def periodic(self):
