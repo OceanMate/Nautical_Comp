@@ -18,10 +18,8 @@ class WaterSensor(Subsystem):
         print("Water sensor initialized")
 
     def is_water_detected(self):
-        print("Water detected: ")
-        print(str(GPIO.input(Constants.waterSensorPin)))
-        return GPIO.input(Constants.waterSensorPin)
-    
+        return not GPIO.input(Constants.waterSensorPin)
+
     def periodic(self):
         try:
             # GPIO.setmode(GPIO.BCM)
@@ -35,4 +33,5 @@ class WaterSensor(Subsystem):
         pass
 
     def cleanup(self):
+        self.comsThead.set_water_data(False)
         GPIO.cleanup()
