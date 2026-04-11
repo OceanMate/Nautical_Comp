@@ -18,11 +18,15 @@ class WaterSensor(Subsystem):
         print("Water sensor initialized")
 
     def is_water_detected(self):
-        print("Water detected: " + str(GPIO.input(Constants.waterSensorPin)))
+        print("Water detected: ")
+        print(str(GPIO.input(Constants.waterSensorPin)))
         return GPIO.input(Constants.waterSensorPin)
     
     def periodic(self):
-        self.comsThead.set_water_data(self.is_water_detected())
+        try:
+            self.comsThead.set_water_data(self.is_water_detected())
+        except Exception as e:
+            print("Error occurred while setting water data: " + str(e))
 
     def end(self):
         GPIO.cleanup()
