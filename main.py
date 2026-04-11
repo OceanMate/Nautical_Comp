@@ -29,8 +29,8 @@ class main:
          
         try:
             self.subsystems["water_sensor"] = WaterSensor()
-        except:
-            print("Error setting up watersensor")
+        except Exception as e:
+            print("Error setting up watersensor exception: " + str(e))
         
         # Create the coms thread
         self.coms = ComsThread()
