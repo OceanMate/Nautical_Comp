@@ -1,6 +1,6 @@
 import board
 import RPi.GPIO as GPIO
-import Constants 
+from Constants import Constants 
 from transmission.ComsThread import ComsThread
 
 class Subsystem:
