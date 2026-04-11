@@ -15,6 +15,7 @@ class WaterSensor(Subsystem):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(Constants.waterSensorPin, GPIO.IN)
         self.comsThead = ComsThread()
+        print("Water sensor initialized")
 
     def is_water_detected(self):
         print("Water detected: " + str(GPIO.input(Constants.waterSensorPin)))
