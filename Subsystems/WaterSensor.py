@@ -10,7 +10,7 @@ class Subsystem:
 
 class WaterSensor(Subsystem):
 
-    def __init__(self, pin):
+    def __init__(self):
         super().__init__()
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(Constants.waterSensorPin, GPIO.IN)
