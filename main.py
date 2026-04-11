@@ -57,6 +57,7 @@ class main:
                     self.shutdown()
         except:
             self.shutdown()
+            self.subsystems["water_sensor"].cleanup()
                 
     def shutdown(self):
         for subsytem in self.subsystems.values():
