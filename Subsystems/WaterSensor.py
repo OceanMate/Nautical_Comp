@@ -25,6 +25,7 @@ class WaterSensor(Subsystem):
     def periodic(self):
         try:
             GPIO.setmode(GPIO.BCM)
+            GPIO.setup(Constants.waterSensorPin, GPIO.IN)
             self.comsThead.set_water_data(self.is_water_detected())
         except Exception as e:
             print("Error occurred while setting water data: " + str(e))
