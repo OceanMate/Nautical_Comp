@@ -27,10 +27,10 @@ class main:
         except:
             print("Error setting up claw")
          
-        # try:
-        #     self.subsystems["water_sensor"] = WaterSensor()
-        # except Exception as e:
-        #     print("Error setting up watersensor exception: " + str(e))
+        try:
+            self.subsystems["water_sensor"] = WaterSensor()
+        except Exception as e:
+            print("Error setting up watersensor exception: " + str(e))
         
         # Create the coms thread
         self.coms = ComsThread()
