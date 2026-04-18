@@ -7,10 +7,10 @@ class Constants:
     frontLeftMotorPin = 0
     frontRightMotorPin = 1
     backLeftMotorPin = 2
-    backRightMotorPin = 5
+    backRightMotorPin = 3
     
     # vertical motor pins
-    frontLeftVerticalMotorPin = 3
+    frontLeftVerticalMotorPin = 5
     frontRightVerticalMotorPin = 4
     backVerticalMotorPin = 6
     
